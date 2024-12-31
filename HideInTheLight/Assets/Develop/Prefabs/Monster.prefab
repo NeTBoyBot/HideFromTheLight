@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 141690945631449068}
   - component: {fileID: 5228207497666722838}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Monster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,7 +35,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4, y: 1, z: -15}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5162229566802734430}
@@ -67,7 +67,7 @@ MonoBehaviour:
   <LookDownAngle>k__BackingField: 70
   <LookUpAngle>k__BackingField: 70
   <LookSensitivity>k__BackingField: 2
-  <MoveSpeed>k__BackingField: 5
+  <MoveSpeed>k__BackingField: 6
   <_baseMoveSpeed>k__BackingField: 5
   CanMove: 1
   CanRotate: 1
@@ -123,7 +123,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31439cfbd2933b945bc931cc6b47576c, type: 2}
+  - {fileID: 2100000, guid: bc837719c7be002498e15d5b8734285a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -208,7 +208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clientStarted: 0
   sceneId: 0
-  _assetId: 1308496166
+  _assetId: 4111104736
   serverOnly: 0
   visible: 0
   hasSpawned: 0

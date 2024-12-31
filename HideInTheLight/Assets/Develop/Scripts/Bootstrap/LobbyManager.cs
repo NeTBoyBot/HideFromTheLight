@@ -1,3 +1,4 @@
+using Develop.Scripts.Core.Lobby;
 using Mirror;
 using UnityEngine;
 
@@ -5,18 +6,16 @@ namespace Develop.Scripts.Bootstrap
 {
     public class LobbyManager : NetworkRoomManager
     {
-        public override void OnRoomClientConnect()
-        {
-            base.OnRoomClientConnect();
-
-            Debug.Log($"Client room connect = {clientIndex}");
-        }
+        [SerializeField] private GameObject humanPrefab;
+        [SerializeField] private GameObject monsterPrefab;
+        [SerializeField] private RoleSelector roleSelector;
 
         public override void OnClientConnect()
         {
             base.OnClientConnect();
 
-            Debug.Log($"Client connect = {clientIndex}"); 
+
+            Debug.Log("ON CLIENT CONNECT");
         }
 
         public override void OnServerConnect(NetworkConnectionToClient conn)

@@ -29,6 +29,9 @@ namespace Mirror
         [SyncVar(hook = nameof(ReadyStateChanged))]
         public bool readyToBegin;
 
+        [SyncVar]
+        public string PlayerName = string.Empty;
+
         /// <summary>
         /// Diagnostic index of the player, e.g. Player1, Player2, etc.
         /// </summary>

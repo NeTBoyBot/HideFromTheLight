@@ -38,6 +38,17 @@ namespace Develop.Scripts.Entities.Player
             HandleInput();
             HandleMovement();
             HandleRotation();
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                _model.ResetSpeedToDefault();
+            }
+            if(Input.GetKeyDown(KeyCode.R))
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                _model.SetSpeed(1);
+            }
         }
 
         #region Handlers

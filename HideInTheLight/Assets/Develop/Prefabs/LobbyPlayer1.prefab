@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8377085758359544950}
   - component: {fileID: 141690945631449068}
   - component: {fileID: 2458534061620304345}
+  - component: {fileID: 2788077943636604580}
   m_Layer: 0
   m_Name: LobbyPlayer1
   m_TagString: Untagged
@@ -122,3 +123,16 @@ MonoBehaviour:
   readyToBegin: 0
   PlayerName: Player
   index: 0
+--- !u!114 &2788077943636604580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7425113612830044589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ade737a4bbf3c4448b228fdcea774b9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Id: 0

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Develop.Scripts.Core.Lobby
 {
-    public class LobbyView : NetworkBehaviour
+    public class LobbyView : MonoBehaviour
     {
         [SerializeField] public Button HumanButton, MonsterButton;
         [SerializeField] public TMP_Text Chat;

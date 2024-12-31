@@ -1,3 +1,4 @@
+using System;
 using Develop.Scripts.Bootstrap;
 using DI;
 using Mirror;
@@ -14,10 +15,12 @@ namespace Develop.Scripts.Core.Lobby
 {
     public class RoleSelector : NetworkBehaviour
     {
-        [Inject] private LobbyView _lobbyView;
+        [SerializeField] private LobbyView _lobbyView;
         private LobbyManager _lobbyManager;
 
         [SyncVar] private int monsterConnectionId = -1;
+        
+        public static int LocalClientId = -1;
 
 
         #region Initialize
@@ -25,10 +28,11 @@ namespace Develop.Scripts.Core.Lobby
         private void Start()
         {
             Debug.Log("START");
-            SubscribeEvents();
+            _lobbyView = FindObjectOfType<LobbyView>();
             _lobbyManager = FindObjectOfType<LobbyManager>();
+            
+            SubscribeEvents();
         }
-
 
         private void SubscribeEvents()
         {
@@ -41,32 +45,30 @@ namespace Develop.Scripts.Core.Lobby
         #endregion
 
         [Command(requiresAuthority = false)]
-        public void CmdSelectRole(PlayerRole role)
+        public void CmdSelectRole(uint playerId,PlayerRole role)
         {
-            if (role == PlayerRole.Monster && _lobbyManager._playerContainer.PlayerRoles.Any(p => p.Value == PlayerRole.Monster))
+            if (role == PlayerRole.Monster && _lobbyManager._container.PlayerRolesInfo.Any(p => p.role == PlayerRole.Monster))
             {
-                _lobbyView.Chat.text += $"\nМонстр уже выбран и";
+                _lobbyView.Chat.text += $"\nпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ";
                 return;
             }
-
-            var playerId = NetworkConnectionToClient.LocalConnectionId;
-
+            print($"ID{playerId}");
             if (role == PlayerRole.Monster)
             {
                 RpcUpdateMonsterButtonState(false);
             }
-            if(role == PlayerRole.Human && _lobbyManager._playerContainer.PlayerRoles[playerId] == PlayerRole.Monster)
+            if(role == PlayerRole.Human && _lobbyManager._container.PlayerRolesInfo.First(p=>p.index == playerId).role == PlayerRole.Monster)
             {
                 RpcUpdateMonsterButtonState(true);
             }
 
-            _lobbyManager._playerContainer.PlayerRoles[playerId] = role;
+            _lobbyManager._container.PlayerRolesInfo.First(p=>p.index == playerId).role = role;
 
             RpcUpdateRoleSelection(playerId, role);
         }
 
         [ClientRpc]
-        void RpcUpdateRoleSelection(int netId, PlayerRole role)
+        void RpcUpdateRoleSelection(uint netId, PlayerRole role)
         {
             string playerName = "";
             int playerIndex = 0;
@@ -75,18 +77,18 @@ namespace Develop.Scripts.Core.Lobby
                 if (player.netId == netId)
                 {
                     playerName = player.PlayerName;
-                    playerIndex = player.index; //Убрать, когда имя будет нормальным из стима например
+                    playerIndex = player.index; //пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     break;
                 }
             }
 
-            _lobbyView.Chat.text += $"\n{playerName}{playerIndex+1} выбрал роль <color=yellow>{role}</color>";    
+            _lobbyView.Chat.text += $"\n{playerName}{playerIndex+1} пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ <color=yellow>{role}</color>";    
         }
 
         [ClientRpc]
         void RpcUpdateMonsterButtonState(bool isInteractable) => _lobbyView.MonsterButton.interactable = isInteractable;
 
-        public PlayerRole GetPlayerRole(int connectionId) => _lobbyManager._playerContainer.PlayerRoles.ContainsKey(connectionId) ? _lobbyManager._playerContainer.PlayerRoles[connectionId] : PlayerRole.None;
+        public PlayerRole GetPlayerRole(int connectionId) => _lobbyManager._container.PlayerRoles.ContainsKey(connectionId) ? _lobbyManager._container.PlayerRoles[connectionId] : PlayerRole.None;
 
 
         public void OnHumanSelected()
@@ -94,7 +96,7 @@ namespace Develop.Scripts.Core.Lobby
             if (!NetworkClient.isConnected)
                 return;
 
-            CmdSelectRole(PlayerRole.Human);
+            CmdSelectRole(NetworkClient.localPlayer.netId,PlayerRole.Human);
         }
 
         public void OnMonsterSelected()
@@ -102,7 +104,7 @@ namespace Develop.Scripts.Core.Lobby
             if (!NetworkClient.isConnected)
                 return;
 
-            CmdSelectRole(PlayerRole.Monster);
+            CmdSelectRole(NetworkClient.localPlayer.netId,PlayerRole.Monster);
         }
     }
 }

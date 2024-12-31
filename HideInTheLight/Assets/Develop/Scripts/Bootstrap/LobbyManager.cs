@@ -1,5 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
 using Develop.Scripts.Core.Lobby;
 using Mirror;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace Develop.Scripts.Bootstrap
@@ -8,14 +11,13 @@ namespace Develop.Scripts.Bootstrap
     {
         [SerializeField] private GameObject humanPrefab;
         [SerializeField] private GameObject monsterPrefab;
-        public PlayerContainer _playerContainer;
+        public PlayerContainer _container;
 
-        public override void Start() => _playerContainer = GetComponentInChildren<PlayerContainer>();
 
         public override void OnClientConnect()
         {
             base.OnClientConnect();
-
+            
 
             Debug.Log("ON CLIENT CONNECT");
         }
@@ -23,10 +25,22 @@ namespace Develop.Scripts.Bootstrap
         public override void OnServerConnect(NetworkConnectionToClient conn)
         {
             base.OnServerConnect(conn);
+            _container = GetComponentInChildren<PlayerContainer>();
+            
+            var playerId = conn.connectionId;
+            print(playerId);
+            
+            _container.PlayerRoles[playerId] = PlayerRole.Human;
 
             Debug.Log($"Server connect = {conn.connectionId}");
-            var playerId = NetworkConnectionToClient.LocalConnectionId;
-            _playerContainer.PlayerRoles[playerId] = PlayerRole.Human;
+        }
+        
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        {
+            base.OnServerAddPlayer(conn);
+            
+            print($"CONNECTED ID {conn.identity.netId}");
+            _container.PlayerRolesInfo.Add(new (){index = conn.identity.netId,role = PlayerRole.Human}) ;
         }
 
         public override void OnRoomServerConnect(NetworkConnectionToClient conn)

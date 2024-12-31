@@ -8,7 +8,9 @@ namespace Develop.Scripts.Bootstrap
     {
         [SerializeField] private GameObject humanPrefab;
         [SerializeField] private GameObject monsterPrefab;
-        [SerializeField] private RoleSelector roleSelector;
+        public PlayerContainer _playerContainer;
+
+        public override void Start() => _playerContainer = GetComponentInChildren<PlayerContainer>();
 
         public override void OnClientConnect()
         {
@@ -23,6 +25,8 @@ namespace Develop.Scripts.Bootstrap
             base.OnServerConnect(conn);
 
             Debug.Log($"Server connect = {conn.connectionId}");
+            var playerId = NetworkConnectionToClient.LocalConnectionId;
+            _playerContainer.PlayerRoles[playerId] = PlayerRole.Human;
         }
 
         public override void OnRoomServerConnect(NetworkConnectionToClient conn)

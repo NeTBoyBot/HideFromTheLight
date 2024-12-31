@@ -1,6 +1,6 @@
 using Develop.Scripts.Bootstrap;
+using DI;
 using Mirror;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -14,20 +14,21 @@ namespace Develop.Scripts.Core.Lobby
 {
     public class RoleSelector : NetworkBehaviour
     {
-        [SerializeField] private LobbyView _lobbyView;
-        private NetworkRoomManager _roomManager;
+        [Inject] private LobbyView _lobbyView;
+        private LobbyManager _lobbyManager;
 
         [SyncVar] private int monsterConnectionId = -1;
-        private readonly SyncDictionary<int, PlayerRole> playerRoles = new();
 
-        public SyncDictionary<NetworkIdentity, PlayerRole> _players = new();
 
         #region Initialize
+
         private void Start()
         {
+            Debug.Log("START");
             SubscribeEvents();
-            _roomManager = FindObjectOfType<LobbyManager>();
+            _lobbyManager = FindObjectOfType<LobbyManager>();
         }
+
 
         private void SubscribeEvents()
         {
@@ -40,50 +41,28 @@ namespace Develop.Scripts.Core.Lobby
         #endregion
 
         [Command(requiresAuthority = false)]
-        public void CmdSelectRole(int netId, PlayerRole role)
-        {
-            if (role == PlayerRole.Monster && monsterConnectionId != -1)
-            {
-                Debug.Log("Монстр уже выбран");
-                return;
-            }
-
-            if (role == PlayerRole.Monster)
-            {
-                monsterConnectionId = netId;
-                RpcUpdateMonsterButtonState(false);
-            }
-            else if(role == PlayerRole.Human && monsterConnectionId == netId)
-            {
-                monsterConnectionId = -1;
-                RpcUpdateMonsterButtonState(true);
-            }
-
-            playerRoles[netId] = role;
-
-
-            RpcUpdateRoleSelection(netId, role);
-        }
-
-        [Command(requiresAuthority = false)]
         public void CmdSelectRole(PlayerRole role)
         {
-            Debug.Log("cmd select role");
-            if (role == PlayerRole.Monster && _players.Any(p => p.Value == PlayerRole.Monster))
+            if (role == PlayerRole.Monster && _lobbyManager._playerContainer.PlayerRoles.Any(p => p.Value == PlayerRole.Monster))
+            {
+                _lobbyView.Chat.text += $"\nМонстр уже выбран и";
                 return;
+            }
 
-            NetworkIdentity localIdentity = NetworkClient.localPlayer;
+            var playerId = NetworkConnectionToClient.LocalConnectionId;
 
             if (role == PlayerRole.Monster)
             {
                 RpcUpdateMonsterButtonState(false);
             }
-            if(role == PlayerRole.Human && _players[localIdentity] == PlayerRole.Monster)
+            if(role == PlayerRole.Human && _lobbyManager._playerContainer.PlayerRoles[playerId] == PlayerRole.Monster)
             {
                 RpcUpdateMonsterButtonState(true);
             }
 
-            _players[localIdentity] = role;
+            _lobbyManager._playerContainer.PlayerRoles[playerId] = role;
+
+            RpcUpdateRoleSelection(playerId, role);
         }
 
         [ClientRpc]
@@ -91,7 +70,7 @@ namespace Develop.Scripts.Core.Lobby
         {
             string playerName = "";
             int playerIndex = 0;
-            foreach (var player in _roomManager.roomSlots)
+            foreach (var player in _lobbyManager.roomSlots)
             {
                 if (player.netId == netId)
                 {
@@ -107,7 +86,7 @@ namespace Develop.Scripts.Core.Lobby
         [ClientRpc]
         void RpcUpdateMonsterButtonState(bool isInteractable) => _lobbyView.MonsterButton.interactable = isInteractable;
 
-        public PlayerRole GetPlayerRole(int connectionId) => playerRoles.ContainsKey(connectionId) ? playerRoles[connectionId] : PlayerRole.None;
+        public PlayerRole GetPlayerRole(int connectionId) => _lobbyManager._playerContainer.PlayerRoles.ContainsKey(connectionId) ? _lobbyManager._playerContainer.PlayerRoles[connectionId] : PlayerRole.None;
 
 
         public void OnHumanSelected()

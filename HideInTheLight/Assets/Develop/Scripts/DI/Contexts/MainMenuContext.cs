@@ -6,6 +6,6 @@ public class MainMenuContext : SceneContext
 {
     public override void RegisterDependencies()
     {
-       
+       RegisterFromScene<LobbyView>();
     }
 }

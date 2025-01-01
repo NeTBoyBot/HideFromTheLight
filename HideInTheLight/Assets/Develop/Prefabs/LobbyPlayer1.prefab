@@ -121,8 +121,8 @@ MonoBehaviour:
   syncInterval: 0
   showRoomGUI: 1
   readyToBegin: 0
-  PlayerName: Player
   index: 0
+  Name: 
 --- !u!114 &2788077943636604580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,4 +135,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ade737a4bbf3c4448b228fdcea774b9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  Name: 
   Id: 0
+  Role: 0

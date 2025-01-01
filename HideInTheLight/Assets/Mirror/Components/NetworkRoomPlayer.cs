@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace Mirror
 {
@@ -29,15 +30,15 @@ namespace Mirror
         [SyncVar(hook = nameof(ReadyStateChanged))]
         public bool readyToBegin;
 
-        [SyncVar]
-        public string PlayerName = string.Empty;
-
         /// <summary>
         /// Diagnostic index of the player, e.g. Player1, Player2, etc.
         /// </summary>
         [Tooltip("Diagnostic index of the player, e.g. Player1, Player2, etc.")]
         [SyncVar(hook = nameof(IndexChanged))]
         public int index;
+
+        [field: SyncVar]
+        public string Name { get; private set; }
 
         #region Unity Callbacks
 
@@ -154,14 +155,14 @@ namespace Mirror
         {
             GUILayout.BeginArea(new Rect(20f + (index * 100), 200f, 90f, 130f));
 
-            GUILayout.Label($"Player [{index + 1}]");
+            GUILayout.Label($"{Name}");
 
             if (readyToBegin)
-                GUILayout.Label("Ready");
+                GUILayout.Label("<color=green>Ready</color>");
             else
                 GUILayout.Label("Not Ready");
 
-            if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("REMOVE"))
+            if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("Kick"))
             {
                 // This button only shows on the Host for all players other than the Host
                 // Host and Players can't remove themselves (stop the client instead)
@@ -171,7 +172,7 @@ namespace Mirror
 
             GUILayout.EndArea();
         }
-
+        public void SetName(string newName) => Name = newName;
         void DrawPlayerReadyButton()
         {
             if (NetworkClient.active && isLocalPlayer)

@@ -1,5 +1,3 @@
-using DI;
-using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

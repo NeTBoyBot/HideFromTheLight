@@ -1,6 +1,4 @@
-using System;
 using Develop.Scripts.Bootstrap;
-using DI;
 using Mirror;
 using System.Linq;
 using UnityEngine;
@@ -17,8 +15,6 @@ namespace Develop.Scripts.Core.Lobby
     {
         [SerializeField] private LobbyView _lobbyView;
         private LobbyManager _lobbyManager;
-
-        [SyncVar] private int monsterConnectionId = -1;
         
         public static int LocalClientId = -1;
 
@@ -44,15 +40,24 @@ namespace Develop.Scripts.Core.Lobby
         }
         #endregion
 
+        #region MainLogic
+
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
+            RpcUpdateMonsterButtonState(!ContainsMonsterInPlayers());
+        }
+
         [Command(requiresAuthority = false)]
         public void CmdSelectRole(int playerId,PlayerRole role)
         {
             if (role == PlayerRole.Monster && _lobbyManager._container.PlayerRolesInfo.Any(p => p.role == PlayerRole.Monster))
             {
-                _lobbyView.Chat.text += $"\n������ ��� ������ �";
+                _lobbyView.Chat.text += $"\n<color=red>Monster already selected!</color>";
+                RpcUpdateMonsterButtonState(false);
                 return;
             }
-            print($"ID{playerId}");
+
             if (role == PlayerRole.Monster)
             {
                 RpcUpdateMonsterButtonState(false);
@@ -78,20 +83,19 @@ namespace Develop.Scripts.Core.Lobby
                 if (player.netId == netId)
                 {
                     playerName = player.PlayerName;
-                    playerIndex = player.index; //������, ����� ��� ����� ���������� �� ����� ��������
+                    playerIndex = player.index;
                     break;
                 }
             }
 
-            _lobbyView.Chat.text += $"\n{playerName}{playerIndex+1} ������ ���� <color=yellow>{role}</color>";    
+            _lobbyView.Chat.text += $"\n{playerName}{playerIndex+1} select role - <color=yellow>{role}</color>";
         }
 
         [ClientRpc]
         void RpcUpdateMonsterButtonState(bool isInteractable) => _lobbyView.MonsterButton.interactable = isInteractable;
+        #endregion
 
-        public PlayerRole GetPlayerRole(int connectionId) => _lobbyManager._container.PlayerRoles.ContainsKey(connectionId) ? _lobbyManager._container.PlayerRoles[connectionId] : PlayerRole.None;
-
-
+        #region Handlers
         public void OnHumanSelected()
         {
             if (!NetworkClient.isConnected)
@@ -107,5 +111,11 @@ namespace Develop.Scripts.Core.Lobby
 
             CmdSelectRole(NetworkClient.localPlayer.gameObject.GetComponent<LobbyModel>().Id,PlayerRole.Monster);
         }
+        #endregion
+
+        public bool ContainsMonsterInPlayers() => _lobbyManager._container.PlayerRolesInfo.Any(p => p.role == PlayerRole.Monster);
+        public PlayerRole GetPlayerRole(int connectionId) 
+            => _lobbyManager._container.PlayerRoles.ContainsKey(connectionId) ? _lobbyManager._container.PlayerRoles[connectionId] 
+            : PlayerRole.None;
     }
 }

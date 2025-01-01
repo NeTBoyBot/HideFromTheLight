@@ -1427,7 +1427,7 @@ MonoBehaviour:
     type: 3}
   monsterPrefab: {fileID: 7425113612830044589, guid: 9d7e495462f75b943a83fba679d21b95,
     type: 3}
-  _container: {fileID: 0}
+  _container: {fileID: 825338767}
 --- !u!114 &950671831
 MonoBehaviour:
   m_ObjectHideFlags: 0

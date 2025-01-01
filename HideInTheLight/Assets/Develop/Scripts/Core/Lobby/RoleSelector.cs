@@ -1,4 +1,5 @@
 using Develop.Scripts.Bootstrap;
+using Develop.Scripts.Entities.Player;
 using Mirror;
 using System.Linq;
 using UnityEngine;
@@ -49,7 +50,7 @@ namespace Develop.Scripts.Core.Lobby
         }
 
         [Command(requiresAuthority = false)]
-        public void CmdSelectRole(int playerId,PlayerRole role)
+        public void CmdSelectRole(int connectionId,PlayerRole role)
         {
             if (role == PlayerRole.Monster && _lobbyManager._container.PlayerRolesInfo.Any(p => p.role == PlayerRole.Monster))
             {
@@ -62,33 +63,29 @@ namespace Develop.Scripts.Core.Lobby
             {
                 RpcUpdateMonsterButtonState(false);
             }
-            if(role == PlayerRole.Human && _lobbyManager._container.PlayerRolesInfo.First(p=>p.index == playerId).role == PlayerRole.Monster)
+            if(role == PlayerRole.Human && _lobbyManager._container.PlayerRolesInfo.First(p=>p.index == connectionId).role == PlayerRole.Monster)
             {
                 RpcUpdateMonsterButtonState(true);
             }
 
-            _lobbyManager._container.PlayerRolesInfo.First(p=>p.index == playerId).role = role;
-            var model = FindObjectsOfType<LobbyModel>().FirstOrDefault(i => i.Id == playerId);
-            model.Role = role;
-            RpcUpdateRoleSelection(playerId, role);
+            _lobbyManager._container.PlayerRolesInfo.First(p=>p.index == connectionId).role = role;
+            FindObjectsOfType<LobbyModel>().First(i => i.Id == connectionId).Role = role;
+
+            RpcUpdateRoleSelection(connectionId, role);
         }
 
         [ClientRpc]
-        void RpcUpdateRoleSelection(int netId, PlayerRole role)
+        void RpcUpdateRoleSelection(int connectionId, PlayerRole role)
         {
-            string playerName = "";
-            int playerIndex = 0;
             foreach (var player in _lobbyManager.roomSlots)
             {
-                if (player.netId == netId)
+                var playerModel = player.GetComponent<LobbyModel>();
+                if (playerModel.Id == connectionId)
                 {
-                    playerName = player.PlayerName;
-                    playerIndex = player.index;
+                    _lobbyView.Chat.text += $"\n{playerModel.Name} select role - <color=yellow>{role}</color>";
                     break;
                 }
             }
-
-            _lobbyView.Chat.text += $"\n{playerName}{playerIndex+1} select role - <color=yellow>{role}</color>";
         }
 
         [ClientRpc]
@@ -114,8 +111,5 @@ namespace Develop.Scripts.Core.Lobby
         #endregion
 
         public bool ContainsMonsterInPlayers() => _lobbyManager._container.PlayerRolesInfo.Any(p => p.role == PlayerRole.Monster);
-        public PlayerRole GetPlayerRole(int connectionId) 
-            => _lobbyManager._container.PlayerRoles.ContainsKey(connectionId) ? _lobbyManager._container.PlayerRoles[connectionId] 
-            : PlayerRole.None;
     }
 }

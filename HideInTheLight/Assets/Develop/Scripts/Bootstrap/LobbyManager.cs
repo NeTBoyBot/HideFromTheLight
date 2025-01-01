@@ -39,8 +39,21 @@ namespace Develop.Scripts.Bootstrap
         {
             base.OnServerAddPlayer(conn);
             
-            print($"CONNECTED ID {conn.identity.netId}");
-            _container.PlayerRolesInfo.Add(new (){index = conn.identity.netId,role = PlayerRole.Human}) ;
+            print($"CONNECTED ID {conn.connectionId}");
+            conn.identity.GetComponent<LobbyModel>().Id = conn.connectionId;
+            conn.identity.GetComponent<LobbyModel>().Role = PlayerRole.Human;
+            _container.PlayerRolesInfo.Add(new (){index = conn.connectionId,role = PlayerRole.Human}) ;
+            
+        }
+
+        public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer, GameObject gamePlayer)
+        {
+            var roomModel = roomPlayer.GetComponent<LobbyModel>();
+            var gameModel = gamePlayer.AddComponent<LobbyModel>();
+            gameModel.Id = roomModel.Id;
+            gameModel.Role = roomModel.Role;
+            NetworkServer.Destroy(roomPlayer);
+            return base.OnRoomServerSceneLoadedForPlayer(conn, roomPlayer, gamePlayer);
         }
 
         public override void OnRoomServerConnect(NetworkConnectionToClient conn)

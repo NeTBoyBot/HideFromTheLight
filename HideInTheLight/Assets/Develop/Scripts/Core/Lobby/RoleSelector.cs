@@ -45,7 +45,7 @@ namespace Develop.Scripts.Core.Lobby
         #endregion
 
         [Command(requiresAuthority = false)]
-        public void CmdSelectRole(uint playerId,PlayerRole role)
+        public void CmdSelectRole(int playerId,PlayerRole role)
         {
             if (role == PlayerRole.Monster && _lobbyManager._container.PlayerRolesInfo.Any(p => p.role == PlayerRole.Monster))
             {
@@ -63,12 +63,13 @@ namespace Develop.Scripts.Core.Lobby
             }
 
             _lobbyManager._container.PlayerRolesInfo.First(p=>p.index == playerId).role = role;
-
+            var model = FindObjectsOfType<LobbyModel>().FirstOrDefault(i => i.Id == playerId);
+            model.Role = role;
             RpcUpdateRoleSelection(playerId, role);
         }
 
         [ClientRpc]
-        void RpcUpdateRoleSelection(uint netId, PlayerRole role)
+        void RpcUpdateRoleSelection(int netId, PlayerRole role)
         {
             string playerName = "";
             int playerIndex = 0;
@@ -96,7 +97,7 @@ namespace Develop.Scripts.Core.Lobby
             if (!NetworkClient.isConnected)
                 return;
 
-            CmdSelectRole(NetworkClient.localPlayer.netId,PlayerRole.Human);
+            CmdSelectRole(NetworkClient.localPlayer.gameObject.GetComponent<LobbyModel>().Id,PlayerRole.Human);
         }
 
         public void OnMonsterSelected()
@@ -104,7 +105,7 @@ namespace Develop.Scripts.Core.Lobby
             if (!NetworkClient.isConnected)
                 return;
 
-            CmdSelectRole(NetworkClient.localPlayer.netId,PlayerRole.Monster);
+            CmdSelectRole(NetworkClient.localPlayer.gameObject.GetComponent<LobbyModel>().Id,PlayerRole.Monster);
         }
     }
 }

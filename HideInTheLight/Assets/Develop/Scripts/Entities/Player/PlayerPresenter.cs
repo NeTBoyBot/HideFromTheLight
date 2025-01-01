@@ -21,12 +21,12 @@ namespace Develop.Scripts.Entities.Player
             if (isLocalPlayer)
             {
                 Debug.Log($"{name} <color=cyan> it's YOU</color> and your id from this server = {netId}");
-                _view.CameraTransform.gameObject.SetActive(true);
+                _view.CameraTransform.GetComponent<Camera>().enabled = true;
             }
             else
             {
                 Debug.Log($"{name} <color=yellow> it's other player</color> and his id from this server = {netId}");
-                _view.CameraTransform.gameObject.SetActive(false);
+                _view.CameraTransform.GetComponent<Camera>().enabled = false;
             }
         }
 

@@ -14,6 +14,6 @@ public class PlayerContainer : MonoBehaviour
 [Serializable]
 public class PlayerInfo
 {
-    public uint index;
+    public int index;
     public PlayerRole role;
 }

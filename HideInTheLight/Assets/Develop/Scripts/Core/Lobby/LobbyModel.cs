@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
-public class LobbyModel : MonoBehaviour
+public class LobbyModel : NetworkBehaviour
 {
-    public int Id;
+    [SyncVar] public int Id;
+    [SyncVar] public PlayerRole Role;
 }

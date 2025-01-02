@@ -31,21 +31,21 @@ namespace Develop.Scripts.Core.Lobby
             NicknameField.onEndEdit.AddListener((name) => OnNicknameEntered(name, conn));
         }
 
-        //Обрботка ввода никнейма
+        //РћР±СЂР±РѕС‚РєР° РІРІРѕРґР° РЅРёРєРЅРµР№РјР°
         private void OnNicknameEntered(string nickname, NetworkConnectionToClient conn)
         {
             if (string.IsNullOrWhiteSpace(nickname) || !NetworkClient.isConnected)
                 return;
 
-            //Передаем команду на сервер для присвоения имени
+            //РџРµСЂРµРґР°РµРј РєРѕРјР°РЅРґСѓ РЅР° СЃРµСЂРІРµСЂ РґР»СЏ РїСЂРёСЃРІРѕРµРЅРёСЏ РёРјРµРЅРё
             CmdSetupNicknameInput(nickname, conn);
         }
 
-        //Команда для передачи никнейма на сервер
+        //РљРѕРјР°РЅРґР° РґР»СЏ РїРµСЂРµРґР°С‡Рё РЅРёРєРЅРµР№РјР° РЅР° СЃРµСЂРІРµСЂ
         [Command(requiresAuthority = false)]
         public void CmdSetupNicknameInput(string nickname, NetworkConnectionToClient conn)
         {
-            //Отправляем на сервер и присваиваем имя игроку
+            //РћС‚РїСЂР°РІР»СЏРµРј РЅР° СЃРµСЂРІРµСЂ Рё РїСЂРёСЃРІР°РёРІР°РµРј РёРјСЏ РёРіСЂРѕРєСѓ
             var roomPlayer = conn.identity.GetComponent<NetworkRoomPlayer>();
             if (roomPlayer != null && !string.IsNullOrWhiteSpace(nickname))
             {

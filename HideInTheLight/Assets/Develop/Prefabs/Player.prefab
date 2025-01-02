@@ -412,6 +412,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5162229566802734430}
     m_Modifications:
+    - target: {fileID: 1238690821055631538, guid: d69075af3144749428965831b93c1b19,
+        type: 3}
+      propertyPath: m_RenderPostProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1238690821055631538, guid: d69075af3144749428965831b93c1b19,
+        type: 3}
+      propertyPath: m_VolumeLayerMask.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
     - target: {fileID: 1461976903493609821, guid: d69075af3144749428965831b93c1b19,
         type: 3}
       propertyPath: m_LocalScale.x

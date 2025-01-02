@@ -1,8 +1,9 @@
 using Mirror;
 
-public class LobbyModel : NetworkBehaviour
+namespace Develop.Scripts.Core.Lobby
 {
-    [SyncVar] public string Name;
-    [SyncVar] public int Id;
-    [SyncVar] public PlayerRole Role;
+    public class LobbyModel : NetworkBehaviour
+    {
+        
+    }
 }

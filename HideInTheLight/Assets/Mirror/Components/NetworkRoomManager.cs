@@ -671,13 +671,13 @@ namespace Mirror
             if (NetworkServer.active && Utils.IsSceneActive(GameplayScene))
             {
                 GUILayout.BeginArea(new Rect(Screen.width - 150f, 10f, 140f, 30f));
-                if (GUILayout.Button("Return to Room"))
+                if (GUILayout.Button("<b>Return to Lobby</b>"))
                     ServerChangeScene(RoomScene);
                 GUILayout.EndArea();
             }
 
             if (Utils.IsSceneActive(RoomScene))
-                GUI.Box(new Rect(10f, 180f, 520f, 150f), "PLAYERS");
+                GUI.Box(new Rect(10f, 380f, 520f, 150f), "<b>PLAYERS</b>");
         }
 
         #endregion

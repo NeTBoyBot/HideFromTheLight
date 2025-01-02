@@ -37,8 +37,8 @@ namespace Mirror
         [SyncVar(hook = nameof(IndexChanged))]
         public int index;
 
-        [field: SyncVar]
-        public string Name { get; private set; }
+        [SyncVar]
+        public string Name;
 
         #region Unity Callbacks
 
@@ -153,7 +153,7 @@ namespace Mirror
 
         void DrawPlayerReadyState()
         {
-            GUILayout.BeginArea(new Rect(20f + (index * 100), 200f, 90f, 130f));
+            GUILayout.BeginArea(new Rect(20f + (index * 100), 400f, 90f, 130f));
 
             GUILayout.Label($"{Name}");
 
@@ -177,7 +177,7 @@ namespace Mirror
         {
             if (NetworkClient.active && isLocalPlayer)
             {
-                GUILayout.BeginArea(new Rect(20f, 300f, 120f, 20f));
+                GUILayout.BeginArea(new Rect(20f, 500f, 120f, 20f));
 
                 if (readyToBegin)
                 {

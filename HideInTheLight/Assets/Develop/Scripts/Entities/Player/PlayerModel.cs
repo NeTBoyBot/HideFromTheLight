@@ -12,9 +12,9 @@ namespace Develop.Scripts.Entities.Player
         [field: SerializeField] public float LookSensitivity { get; private set; } = 2f;
 
         [field: Header("Movement settings")]
-        [field: SyncVar(hook = nameof(SyncVarSetSpeed))] //Синхронизация MoveSpeed
+        [field: SyncVar(hook = nameof(SyncVarSetSpeed))] //Синхронизация MoveSpeed Возможно не работает с Field
         [field: SerializeField] public float MoveSpeed { get; private set; } = 5f;
-        [field: SerializeField] private float _baseMoveSpeed { get; set; } = 5f;
+        [field: SerializeField] private float baseMoveSpeed { get; set; } = 5f;
 
         [field: SerializeField] public bool CanMove = true;
         [field: SerializeField] public bool CanRotate = true;
@@ -60,6 +60,6 @@ namespace Develop.Scripts.Entities.Player
         }
 
         //Восстановление базовой скорости через сервер
-        public void ResetSpeedToDefault() => MoveSpeed = _baseMoveSpeed;
+        public void ResetSpeedToDefault() => MoveSpeed = baseMoveSpeed;
     }
 }

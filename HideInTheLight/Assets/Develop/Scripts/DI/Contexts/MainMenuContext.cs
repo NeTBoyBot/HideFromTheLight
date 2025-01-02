@@ -1,10 +1,14 @@
 using Develop.Scripts.Core.Lobby;
-using DI;   
+using DI;
+using UnityEngine;
 
 public class MainMenuContext : SceneContext
 {
+    [SerializeField] private LobbyView _lobbyView;
+    [SerializeField] private LobbyModel _lobbyModel;
     public override void RegisterDependencies()
     {
-       RegisterFromScene<LobbyView>();
+        RegisterFromInstance(_lobbyView);
+        RegisterFromInstance(_lobbyModel);
     }
 }

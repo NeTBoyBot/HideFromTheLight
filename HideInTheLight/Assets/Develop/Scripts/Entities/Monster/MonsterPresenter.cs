@@ -1,18 +1,16 @@
+using System.Collections;
+using System.Collections.Generic;
 using Develop.Scripts.Core.Lobby;
-using Develop.Scripts.Interfaces;
-using Develop.Scripts.Items.LightSources.FlashLight;
+using Develop.Scripts.Entities.Player;
 using Mirror;
+using Mirror.Examples.CCU;
 using UnityEngine;
 
-namespace Develop.Scripts.Entities.Player
+public class MonsterPresenter : NetworkBehaviour
 {
-    public class PlayerPresenter : NetworkBehaviour
-    {
-        private PlayerModel _model = null;
-        private PlayerView _view = null;
+        private MonsterModel _model = null;
+        private MonsterView _view = null;
         private PlayerIdentification _identification = null;
-
-        private IInteractable _activeItem;
 
         private Vector2 _inputLook = Vector2.zero;
         private Vector3 _inputMove = Vector2.zero;
@@ -21,9 +19,8 @@ namespace Develop.Scripts.Entities.Player
 
         private void Start()
         {
-            _activeItem = GetComponentInChildren<FlashLightPresenter>();
-            _view = GetComponent<PlayerView>();
-            _model = GetComponent<PlayerModel>();
+            _view = GetComponent<MonsterView>();
+            _model = GetComponent<MonsterModel>();
             _identification = GetComponentInParent<PlayerIdentification>();
 
             if (isLocalPlayer)
@@ -47,8 +44,8 @@ namespace Develop.Scripts.Entities.Player
 
         private void Update()
         {
-            if (!isLocalPlayer) //Если это не ты
-                return;         //Не пытайся управлять этим игроком
+            if (!isLocalPlayer) //Р•СЃР»Рё СЌС‚Рѕ РЅРµ С‚С‹
+                return;         //РќРµ РїС‹С‚Р°Р№СЃСЏ СѓРїСЂР°РІР»СЏС‚СЊ СЌС‚РёРј РёРіСЂРѕРєРѕРј
 
             HandleInput();
             HandleMovement();
@@ -63,11 +60,6 @@ namespace Develop.Scripts.Entities.Player
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 _model.SetSpeed(1);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                _activeItem.Interact();
             }
         }
 
@@ -104,5 +96,4 @@ namespace Develop.Scripts.Entities.Player
             _view.Camera.transform.localRotation = Quaternion.Euler(_cameraPitch, 0, 0);
         }
         #endregion
-    }
 }

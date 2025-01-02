@@ -75,7 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 269a5e8fb5982dc4fb38150c278135cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Radius>k__BackingField: 0.17
+  <Radius>k__BackingField: 50
   <Height>k__BackingField: 5
   <Center>k__BackingField: {x: -2.99, y: 0, z: 0}
   _gizmos: 0

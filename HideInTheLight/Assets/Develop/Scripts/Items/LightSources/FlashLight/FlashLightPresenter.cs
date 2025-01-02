@@ -1,10 +1,11 @@
+using System;
 using Develop.Scripts.Interfaces;
 using UnityEngine;
 
 namespace Develop.Scripts.Items.LightSources.FlashLight
 {
     [RequireComponent(typeof(FlashLightModel),typeof(FlashLightView))]
-    public class FlashLightPresenter : LightSourceBase, IDetector<FlashLightPresenter>
+    public class FlashLightPresenter : LightSourceBase, IDetector<MonsterModel>,IInteractable
     {
         public override bool IsOn { get; set; }
 
@@ -41,6 +42,11 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
             _view.TurnOff();
         }
 
+        private void Update()
+        {
+            Detect();
+        }
+
         public override void Interact()
         {
             if(IsOn)
@@ -49,8 +55,10 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
                 TurnOn();
         }
         
-        public FlashLightPresenter Detect()
+        public MonsterModel Detect()
         {
+            if (!IsOn)
+                return null;
             Vector3 capsuleCenter = transform.position + transform.TransformDirection(transform.position + Center);
             float radius = Radius * Mathf.Max(transform.lossyScale.y, transform.lossyScale.z);
             float height = Mathf.Max(0, Height * transform.lossyScale.x - 2 * radius);
@@ -59,13 +67,18 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
             Vector3 start = capsuleCenter - offset;
             Vector3 end = capsuleCenter + offset;
 
-            Collider[] cols = Physics.OverlapCapsule(start, end, radius);
+            RaycastHit[] cols = Physics.RaycastAll(transform.position, transform.forward, radius);
             foreach (var col in cols)
             {
-                if (col.gameObject != gameObject) // Исключаем саму себя
+                if (col.collider.gameObject != gameObject) // Исключаем саму себя
                 {
-                    if (col.gameObject.TryGetComponent(out FlashLightPresenter presenter))
+                    if (col.collider.gameObject.TryGetComponent(out MonsterModel presenter))
+                    {
+                        presenter.AddHealth(-Time.deltaTime * 20);
+                        print("MONSTER DETECTED");
                         return presenter;
+                    }
+                        
                 }
             }
 
@@ -78,6 +91,10 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
         {
             if (!_gizmos)
                 return;
+
+            Gizmos.DrawRay(transform.position,transform.forward*Radius);
+            
+            return;
             
             Vector3 capsuleCenter = transform.position + transform.TransformDirection(Center);
 

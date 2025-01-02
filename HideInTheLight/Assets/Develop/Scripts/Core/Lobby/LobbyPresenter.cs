@@ -62,7 +62,14 @@ namespace Develop.Scripts.Core.Lobby
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
+            if(conn.identity != null)
+            {
+                Debug.LogError("Player has already added for this connection");
+                return;
+            }
+
             base.OnServerAddPlayer(conn);
+
 
             var roomPlayer = conn.identity.GetComponent<NetworkRoomPlayer>();
 

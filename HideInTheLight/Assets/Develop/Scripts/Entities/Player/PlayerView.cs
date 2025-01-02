@@ -6,7 +6,8 @@ namespace Develop.Scripts.Entities.Player
     public class PlayerView : NetworkBehaviour
     {
         [Header("Player Components")]
-        public Transform CameraTransform;
+        public Camera Camera;
+        public AudioListener AudioListener;
         public CharacterController CharacterController;
     }
 }

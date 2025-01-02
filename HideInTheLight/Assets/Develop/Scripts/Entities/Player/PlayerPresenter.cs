@@ -1,3 +1,4 @@
+using Develop.Scripts.Core.Lobby;
 using Mirror;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace Develop.Scripts.Entities.Player
     {
         private PlayerModel _model = null;
         private PlayerView _view = null;
+        private PlayerIdentification _identification = null;
 
         private Vector2 _inputLook = Vector2.zero;
         private Vector3 _inputMove = Vector2.zero;
@@ -17,16 +19,24 @@ namespace Develop.Scripts.Entities.Player
         {
             _view = GetComponent<PlayerView>();
             _model = GetComponent<PlayerModel>();
+            _identification = GetComponentInParent<PlayerIdentification>();
 
             if (isLocalPlayer)
             {
-                Debug.Log($"{name} <color=cyan> it's YOU</color> and your id from this server = {netId}");
-                _view.CameraTransform.gameObject.SetActive(true);
+                Debug.Log($"{_identification.PlayerName} <color=cyan> it's YOU</color> " +
+                    $"and your id from this server = <color=cyan>{_identification.PlayerId}</color>" +
+                    $"\n your net id = <color=cyan>{netId}</color>");
+
+                _view.Camera.enabled = true;
+                _view.AudioListener.enabled = true;
             }
             else
             {
-                Debug.Log($"{name} <color=yellow> it's other player</color> and his id from this server = {netId}");
-                _view.CameraTransform.gameObject.SetActive(false);
+                Debug.Log($"{_identification.PlayerName} <color=yellow> it's OTHER player</color> " +
+                    $"and his id from this server = <color=cyan>{_identification.PlayerId}</color>" +
+                    $"\n his net id = <color=cyan>{netId}</color>");
+                _view.Camera.enabled = false;
+                _view.AudioListener.enabled = false;
             }
         }
 
@@ -38,6 +48,17 @@ namespace Develop.Scripts.Entities.Player
             HandleInput();
             HandleMovement();
             HandleRotation();
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                _model.ResetSpeedToDefault();
+            }
+            if(Input.GetKeyDown(KeyCode.R))
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                _model.SetSpeed(1);
+            }
         }
 
         #region Handlers
@@ -70,7 +91,7 @@ namespace Develop.Scripts.Entities.Player
             _cameraPitch -= _inputLook.y;
             _cameraPitch = Mathf.Clamp(_cameraPitch, -_model.LookUpAngle, _model.LookDownAngle);
 
-            _view.CameraTransform.localRotation = Quaternion.Euler(_cameraPitch, 0, 0);
+            _view.Camera.transform.localRotation = Quaternion.Euler(_cameraPitch, 0, 0);
         }
         #endregion
     }

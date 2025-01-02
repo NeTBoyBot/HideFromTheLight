@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace Mirror
 {
@@ -16,6 +18,7 @@ namespace Mirror
         /// <para>As this UI is rendered using the old GUI system, it is only recommended for testing purposes.</para>
         /// </summary>
         [Tooltip("This flag controls whether the default UI is shown for the room player")]
+        [SyncVar]
         public bool showRoomGUI = true;
 
         [Header("Diagnostics")]
@@ -35,6 +38,12 @@ namespace Mirror
         [Tooltip("Diagnostic index of the player, e.g. Player1, Player2, etc.")]
         [SyncVar(hook = nameof(IndexChanged))]
         public int index;
+
+        [SyncVar]
+        public string Name;
+
+        [SyncVar, Min(0)]
+        public string RoleName;
 
         #region Unity Callbacks
 
@@ -146,19 +155,18 @@ namespace Mirror
                 DrawPlayerReadyButton();
             }
         }
-
         void DrawPlayerReadyState()
         {
-            GUILayout.BeginArea(new Rect(20f + (index * 100), 200f, 90f, 130f));
+            GUILayout.BeginArea(new Rect(20f + (index * 100), 400f, 90f, 130f));
 
-            GUILayout.Label($"Player [{index + 1}]");
+            GUILayout.Label($"{Name}\n{RoleName}");
 
             if (readyToBegin)
-                GUILayout.Label("Ready");
+                GUILayout.Label("<color=green>Ready</color>");
             else
                 GUILayout.Label("Not Ready");
 
-            if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("REMOVE"))
+            if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("Kick"))
             {
                 // This button only shows on the Host for all players other than the Host
                 // Host and Players can't remove themselves (stop the client instead)
@@ -169,11 +177,14 @@ namespace Mirror
             GUILayout.EndArea();
         }
 
+        public void SetName(string newName) => Name = newName;
+        public void SetRoleName(string roleName) => RoleName = roleName;
+        public void ShowRoomGUI(bool value) => showRoomGUI = value;
         void DrawPlayerReadyButton()
         {
             if (NetworkClient.active && isLocalPlayer)
             {
-                GUILayout.BeginArea(new Rect(20f, 300f, 120f, 20f));
+                GUILayout.BeginArea(new Rect(20f, 500f, 120f, 20f));
 
                 if (readyToBegin)
                 {

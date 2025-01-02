@@ -1,6 +1,8 @@
+using Develop.Scripts.Core.Lobby;
 using Develop.Scripts.Services.Abstractions;
 using Develop.Scripts.Services.Behaviours;
 using DI;
+using UnityEngine;
 
 namespace Develop.Scripts.Contexts
 {
@@ -8,10 +10,7 @@ namespace Develop.Scripts.Contexts
     {
         public override void RegisterDependencies()
         {
-            RegisterSceneLoader();
-            //Other dependencies;
+            Register<ISceneLoader, SceneLoader>(false);
         }
-
-        private void RegisterSceneLoader() => Register<ISceneLoader, SceneLoader>(false);
     }
 }

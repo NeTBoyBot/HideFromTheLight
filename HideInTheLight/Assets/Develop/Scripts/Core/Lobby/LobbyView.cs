@@ -9,10 +9,12 @@ namespace Develop.Scripts.Core.Lobby
         [SyncVar]
         [SerializeField] private Vector3 _firstSpawnPosition;
 
+        [SyncVar]
         [SerializeField] private float _offsetPosition;
 
         [ClientRpc]
-        public void RpcSetSpawnPosition(NetworkRoomPlayer player)
+        public void RpcSetSpawnPosition(NetworkRoomPlayer player) 
             => player.transform.position = new Vector3(_firstSpawnPosition.x += _offsetPosition, 0, 0);
+
     }
 }

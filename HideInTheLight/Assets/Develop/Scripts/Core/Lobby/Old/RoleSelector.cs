@@ -1,11 +1,5 @@
 using Mirror;
 
-public enum PlayerRole
-{
-    None,
-    Human,
-    Monster
-}
 namespace Develop.Scripts.Core.Lobby.Old
 {
     public class RoleSelector : NetworkBehaviour

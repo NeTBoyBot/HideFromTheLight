@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -17,6 +18,7 @@ namespace Mirror
         /// <para>As this UI is rendered using the old GUI system, it is only recommended for testing purposes.</para>
         /// </summary>
         [Tooltip("This flag controls whether the default UI is shown for the room player")]
+        [SyncVar]
         public bool showRoomGUI = true;
 
         [Header("Diagnostics")]
@@ -39,6 +41,9 @@ namespace Mirror
 
         [SyncVar]
         public string Name;
+
+        [SyncVar, Min(0)]
+        public string RoleName;
 
         #region Unity Callbacks
 
@@ -150,12 +155,11 @@ namespace Mirror
                 DrawPlayerReadyButton();
             }
         }
-
         void DrawPlayerReadyState()
         {
             GUILayout.BeginArea(new Rect(20f + (index * 100), 400f, 90f, 130f));
 
-            GUILayout.Label($"{Name}");
+            GUILayout.Label($"{Name}\n{RoleName}");
 
             if (readyToBegin)
                 GUILayout.Label("<color=green>Ready</color>");
@@ -172,7 +176,10 @@ namespace Mirror
 
             GUILayout.EndArea();
         }
+
         public void SetName(string newName) => Name = newName;
+        public void SetRoleName(string roleName) => RoleName = roleName;
+        public void ShowRoomGUI(bool value) => showRoomGUI = value;
         void DrawPlayerReadyButton()
         {
             if (NetworkClient.active && isLocalPlayer)

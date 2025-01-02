@@ -19,7 +19,7 @@ namespace Develop.Scripts.Entities.Player
         {
             _view = GetComponent<PlayerView>();
             _model = GetComponent<PlayerModel>();
-            _identification = GetComponent<PlayerIdentification>();
+            _identification = GetComponentInParent<PlayerIdentification>();
 
             if (isLocalPlayer)
             {

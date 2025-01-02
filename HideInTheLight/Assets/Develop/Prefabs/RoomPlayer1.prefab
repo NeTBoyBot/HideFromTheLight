@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 141690945631449068}
   - component: {fileID: 2458534061620304345}
   m_Layer: 0
-  m_Name: LobbyPlayer1
+  m_Name: RoomPlayer1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -118,7 +118,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  showRoomGUI: 1
+  showRoomGUI: 0
   readyToBegin: 0
   index: 0
   Name: 
+  RoleName: Human

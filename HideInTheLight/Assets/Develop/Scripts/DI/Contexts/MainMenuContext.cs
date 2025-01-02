@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class MainMenuContext : SceneContext
 {
-    [SerializeField] private LobbyView _lobbyView;
     [SerializeField] private LobbyModel _lobbyModel;
+    [SerializeField] private LobbyView _lobbyView;
     public override void RegisterDependencies()
     {
-        RegisterFromInstance(_lobbyView);
         RegisterFromInstance(_lobbyModel);
+        RegisterFromInstance(_lobbyView);
     }
 }

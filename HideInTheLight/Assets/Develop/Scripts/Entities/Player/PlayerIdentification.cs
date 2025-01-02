@@ -11,17 +11,36 @@ namespace Develop.Scripts.Core.Lobby
         [SyncVar] public string PlayerName;
         [SyncVar] public int PlayerId;
         [SyncVar] public PlayerRole PlayerRole;
+
+        [SerializeField] private GameObject MonsterObject, HumanObject;
         public override void OnStartClient()
         {
             base.OnStartClient();
-            Debug.Log($"OnStartClient {PlayerName}");
+            Debug.Log($"OnStartClient <color=yellow>{PlayerName} [{PlayerRole}]</color>");
+            name = $"{PlayerName} [{PlayerRole}]";
+
+            if(PlayerRole == PlayerRole.Monster)
+                HumanObject.SetActive(false);
+                //Destroy(HumanObject);
+            else
+            {
+                MonsterObject.SetActive(false);
+                //Destroy(MonsterObject);
+            }
         }
 
-        public void Initialize(string name, int id)
+        public void Initialize(string name, int id, string role)
         {
             PlayerName = name;
             PlayerId = id;
-            PlayerRole = PlayerRole.Human;
+            if(System.Enum.TryParse(role, out PlayerRole parsedRole))
+            {
+                PlayerRole = parsedRole;
+            }
+            else
+            {
+                Debug.LogError($"Invalid role: {role}");
+            }
         }
     }
 }

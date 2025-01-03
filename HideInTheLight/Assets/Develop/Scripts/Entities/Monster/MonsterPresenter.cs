@@ -11,6 +11,11 @@ public class MonsterPresenter : NetworkBehaviour
         private Vector2 _inputLook = Vector2.zero;
         private Vector3 _inputMove = Vector2.zero;
 
+        [SerializeField] private MeshRenderer _materializedForm;
+        [SerializeField] private GameObject _unMaterializedForm;
+        [SyncVar] public bool Materialized = true;
+        
+
         private float _cameraPitch;
 
         private void Start()
@@ -38,6 +43,42 @@ public class MonsterPresenter : NetworkBehaviour
             }
         }
 
+        public void ChangeMaterializationState()
+        {
+            if (Materialized)
+            {
+                CmdUnMaterialize();
+            }
+            else
+            {
+                CmdMaterialize();
+            }
+        }
+
+        [Command]
+        public void CmdMaterialize() => RpcMaterialize();
+        [Command]
+        public void CmdUnMaterialize() => RpcUnMaterialize();
+
+        [ClientRpc]
+        private void RpcMaterialize()
+        {
+            
+                _unMaterializedForm.SetActive(false);
+                _materializedForm.enabled = true;
+                Materialized = true;
+            
+        }
+        [ClientRpc]
+        private void RpcUnMaterialize()
+        {
+            
+                _unMaterializedForm.SetActive(true);
+                _materializedForm.enabled = false;
+                Materialized = false;
+            
+        }
+
         private void Update()
         {
             if (!isLocalPlayer) //Если это не ты
@@ -62,6 +103,11 @@ public class MonsterPresenter : NetworkBehaviour
             if (!_model.CanMove)
                 return;
 
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                ChangeMaterializationState();
+            }
+            
             Vector3 move = transform.TransformDirection(_inputMove) * _model.GetMoveSpeed();
             move.y = Physics.gravity.y;
 

@@ -10,14 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 2498586214179600396}
   - component: {fileID: 4972311329838766171}
+  - component: {fileID: 1389443567490865820}
+  - component: {fileID: 9076804261026280051}
+  - component: {fileID: 314976527061562325}
   - component: {fileID: 8377085758359544950}
   - component: {fileID: 7377003548831267008}
   - component: {fileID: 9026614475699995456}
   - component: {fileID: 141690945631449068}
   - component: {fileID: 5228207497666722838}
-  - component: {fileID: 314976527061562325}
-  - component: {fileID: 9076804261026280051}
-  - component: {fileID: 1389443567490865820}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Untagged
@@ -49,6 +49,62 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7425113612830044589}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1389443567490865820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7425113612830044589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 429298975a6f8a046ae8a242bb9ae1df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  <LookDownAngle>k__BackingField: 60
+  <LookUpAngle>k__BackingField: 60
+  <LookSensitivity>k__BackingField: 2
+  moveSpeed: 5
+  <baseMoveSpeed>k__BackingField: 5
+  CanMove: 1
+  CanRotate: 1
+  health: 100
+--- !u!114 &9076804261026280051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7425113612830044589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b553832f333c08b429edb9b8e24a5331, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  Camera: {fileID: 6617325407319253391}
+  AudioListener: {fileID: 177565488152357523}
+  CharacterController: {fileID: 9026614475699995456}
+--- !u!114 &314976527061562325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7425113612830044589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51a538aa0a167604c90dcc0e6e8b4248, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!23 &8377085758359544950
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -192,62 +248,6 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
---- !u!114 &314976527061562325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7425113612830044589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51a538aa0a167604c90dcc0e6e8b4248, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
---- !u!114 &9076804261026280051
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7425113612830044589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b553832f333c08b429edb9b8e24a5331, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  Camera: {fileID: 6617325407319253391}
-  AudioListener: {fileID: 177565488152357523}
-  CharacterController: {fileID: 9026614475699995456}
---- !u!114 &1389443567490865820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7425113612830044589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 429298975a6f8a046ae8a242bb9ae1df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  <LookDownAngle>k__BackingField: 60
-  <LookUpAngle>k__BackingField: 60
-  <LookSensitivity>k__BackingField: 2
-  <MoveSpeed>k__BackingField: 5
-  <baseMoveSpeed>k__BackingField: 5
-  CanMove: 1
-  CanRotate: 1
-  Health: 100
 --- !u!1 &7827744069203760822
 GameObject:
   m_ObjectHideFlags: 0

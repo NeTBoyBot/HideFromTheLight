@@ -1,9 +1,12 @@
+using Cysharp.Threading.Tasks;
+using Mirror;
 using System;
+using System.Threading;
 using UnityEngine;
 
 namespace Develop.Scripts.Items.LightSources.FlashLight
 {
-    public class FlashLightView : MonoBehaviour
+    public class FlashLightView : NetworkBehaviour
     {
         private Light _light;
 
@@ -13,14 +16,17 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
             _light.gameObject.SetActive(false);
         }
 
-        public void TurnOn()
+        [ClientRpc]
+        public void RpcTurnOn()
         {
             _light.gameObject.SetActive(true);
         }
 
-        public void TurnOff()
+        [ClientRpc]
+        public void RpcTurnOff()
         {
             _light.gameObject.SetActive(false);
         }
+
     }
 }

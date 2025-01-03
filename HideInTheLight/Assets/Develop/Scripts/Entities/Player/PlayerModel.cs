@@ -12,14 +12,13 @@ namespace Develop.Scripts.Entities.Player
         [field: SerializeField] public float LookSensitivity { get; private set; } = 2f;
 
         [field: Header("Movement settings")]
-        [field: SyncVar(hook = nameof(SyncVarSetSpeed))] //Синхронизация MoveSpeed Возможно не работает с Field
+        [field: SyncVar(hook = nameof(SyncVarSetSpeed))]
         [field: SerializeField] public float MoveSpeed { get; private set; } = 5f;
         [field: SerializeField] private float baseMoveSpeed { get; set; } = 5f;
 
         [field: SerializeField] public bool CanMove = true;
         [field: SerializeField] public bool CanRotate = true;
 
-        //Метод для изменения MoveSpeed с клиента через команду
         public void SetSpeed(float newSpeed)
         {
             if (newSpeed < 0)
@@ -27,29 +26,6 @@ namespace Develop.Scripts.Entities.Player
 
             MoveSpeed = newSpeed;
         }
-
-        //Замедление всех игроков, вынести в монстра
-        //[Command]
-        //public void CmdChangeSpeedAllPlayers(float newSpeed)
-        //{
-        //if (!isLocalPlayer)
-        //    return;
-
-        //RpcSetAllPlayersSpeed(newSpeed);
-        //}
-        //[ClientRpc]
-        //private void RpcSetAllPlayersSpeed(float newSpeed)
-        //{
-        //    foreach (var conn in NetworkServer.connections.Values)
-        //    {
-        //        if(conn.identity != null)
-        //        {
-        //            var player = conn.identity.GetComponent<PlayerModel>();
-        //            player.MoveSpeed = newSpeed;
-        //            Debug.Log($"[ClientRpc] MoveSpeed установлено на {newSpeed} для клиента {player.netId}");
-        //        }
-        //    }
-        //}
 
         public void SyncVarSetSpeed(float oldValue, float newValue)
         {

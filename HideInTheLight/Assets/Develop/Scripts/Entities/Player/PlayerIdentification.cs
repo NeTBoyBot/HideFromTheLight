@@ -20,11 +20,13 @@ namespace Develop.Scripts.Core.Lobby
             name = $"{PlayerName} [{PlayerRole}]";
 
             if(PlayerRole == PlayerRole.Monster)
-                HumanObject.SetActive(false);
+            {
+                MonsterObject.SetActive(true);
                 //Destroy(HumanObject);
+            }
             else
             {
-                MonsterObject.SetActive(false);
+                HumanObject.SetActive(true);
                 //Destroy(MonsterObject);
             }
         }

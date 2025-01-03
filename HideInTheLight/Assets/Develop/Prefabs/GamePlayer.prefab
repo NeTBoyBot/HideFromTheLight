@@ -141,10 +141,20 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5228207497666722838, guid: 5b2e25756103c554bad377e4ea86f337,
+        type: 3}
+      propertyPath: bufferResetMultiplier
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7425113612830044589, guid: 5b2e25756103c554bad377e4ea86f337,
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7425113612830044589, guid: 5b2e25756103c554bad377e4ea86f337,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -3393217333224973001, guid: 5b2e25756103c554bad377e4ea86f337, type: 3}
@@ -238,14 +248,39 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5228207497666722838, guid: 0f177ee09f6c10c4f8ce806aad923046,
+        type: 3}
+      propertyPath: syncDirection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5228207497666722838, guid: 0f177ee09f6c10c4f8ce806aad923046,
+        type: 3}
+      propertyPath: coordinateSpace
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5228207497666722838, guid: 0f177ee09f6c10c4f8ce806aad923046,
+        type: 3}
+      propertyPath: bufferResetMultiplier
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7425113612830044589, guid: 0f177ee09f6c10c4f8ce806aad923046,
         type: 3}
       propertyPath: m_Name
       value: Monster
       objectReference: {fileID: 0}
+    - target: {fileID: 7425113612830044589, guid: 0f177ee09f6c10c4f8ce806aad923046,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7425113612830044589, guid: 0f177ee09f6c10c4f8ce806aad923046,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 141690945631449068, guid: 0f177ee09f6c10c4f8ce806aad923046, type: 3}
-    - {fileID: -3393217333224973001, guid: 0f177ee09f6c10c4f8ce806aad923046, type: 3}
+    - {fileID: 0}
     m_RemovedGameObjects:
     - {fileID: 4544721433784872778, guid: 0f177ee09f6c10c4f8ce806aad923046, type: 3}
     m_AddedGameObjects: []
@@ -274,7 +309,7 @@ PrefabInstance:
     - target: {fileID: 940923671953748264, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.651
+      value: 0.637
       objectReference: {fileID: 0}
     - target: {fileID: 940923671953748264, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
         type: 3}
@@ -284,7 +319,7 @@ PrefabInstance:
     - target: {fileID: 940923671953748264, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.384
+      value: 0.215
       objectReference: {fileID: 0}
     - target: {fileID: 940923671953748264, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
         type: 3}
@@ -324,7 +359,7 @@ PrefabInstance:
     - target: {fileID: 1041901248555888466, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.236
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1041901248555888466, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
         type: 3}
@@ -345,6 +380,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2571213178716104494, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.271
       objectReference: {fileID: 0}
     - target: {fileID: 2571213178716104494, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
         type: 3}
@@ -381,6 +421,21 @@ PrefabInstance:
       propertyPath: _assetId
       value: 17984993
       objectReference: {fileID: 0}
+    - target: {fileID: 6963637567563376829, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
+        type: 3}
+      propertyPath: _gizmos
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6963637567563376829, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
+        type: 3}
+      propertyPath: syncDirection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6963637567563376829, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
+        type: 3}
+      propertyPath: <Center>k__BackingField.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8900758839325889489, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
         type: 3}
       propertyPath: m_IsActive
@@ -390,8 +445,52 @@ PrefabInstance:
     - {fileID: 6320718438337733938, guid: a92d9460a1eb2db4dbd73605d5c3ee2f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6024058311246753162, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7010816702269076720}
   m_SourcePrefab: {fileID: 100100000, guid: a92d9460a1eb2db4dbd73605d5c3ee2f, type: 3}
+--- !u!1 &2992445153492207599 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6024058311246753162, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,
+    type: 3}
+  m_PrefabInstance: {fileID: 8799624778842647141}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7010816702269076720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2992445153492207599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 8579455168153328461}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 1
+  sendIntervalMultiplier: 1
+  timelineOffset: 0
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChange: 1
+  compressRotation: 1
+  bufferResetMultiplier: 3
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
 --- !u!4 &8579455168153328461 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 940923671953748264, guid: a92d9460a1eb2db4dbd73605d5c3ee2f,

@@ -1,5 +1,5 @@
-using System;
 using Develop.Scripts.Interfaces;
+using Mirror;
 using UnityEngine;
 
 namespace Develop.Scripts.Items.LightSources.FlashLight
@@ -7,6 +7,7 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
     [RequireComponent(typeof(FlashLightModel),typeof(FlashLightView))]
     public class FlashLightPresenter : LightSourceBase, IDetector<MonsterModel>,IInteractable
     {
+        [field: SyncVar]
         public override bool IsOn { get; set; }
 
         [field:Space(1)]
@@ -24,69 +25,143 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
         private FlashLightView _view;
         private FlashLightModel _model;
 
-        private void Awake()
+        #region Initialize
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            Debug.Log("FLASHLIGHT START CLIENT");
+            Initialize();
+
+            SubscribeEvents();
+        }
+
+        private void Initialize()
         {
             _view = GetComponent<FlashLightView>();
             _model = GetComponent<FlashLightModel>();
-        }
 
-        public override void TurnOn()
+            _model._lastDamageTime = 0f;
+            _model._lastlossTime = 0f;
+        }
+        private void SubscribeEvents()
+        {
+            _model.OnOutOfCharge += CmdTurnOff;
+        }
+        #endregion
+
+        [Command(requiresAuthority = false)]
+        public override void CmdTurnOn()
         {
             IsOn = true;
-            _view.TurnOn();
+            _view.RpcTurnOn();
         }
 
-        public override void TurnOff()
+        [Command(requiresAuthority = false)]
+        public override void CmdTurnOff()
         {
             IsOn = false;
-            _view.TurnOff();
+            _view.RpcTurnOff();
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
-            Detect();
+            if (!isServer && authority)
+            {
+                CmdRequestDetection();
+            }
+            else if (isServer)
+            {
+                DetectAndDamage();
+            }
+
+            //НУЖНО ПРОВЕРИТЬ НЕ С ЛОКАЛЬНЫМИ БОЛВАНЧИКАМИ, А С РЕАЛЬНЫМИ ИГРОКАМИ
+            //if (authority)
+            //{
+            //    CmdRequestDetection();
+            //}
         }
 
         public override void Interact()
         {
-            if(IsOn)
-                TurnOff();
+            if (!_model.HasEnergy())
+                return;
+
+            if (IsOn)
+                CmdTurnOff();
             else
-                TurnOn();
+                CmdTurnOn();
         }
-        
-        public MonsterModel Detect()
+        [Command(requiresAuthority = true)]
+        public void CmdRequestDetection()
         {
-            if (!IsOn)
-                return null;
-            Vector3 capsuleCenter = transform.position + transform.TransformDirection(transform.position + Center);
+            Debug.Log("CMD REQUEST DETECTION");
+            DetectAndDamage();
+        }
+
+        [Server]
+        private void DetectAndDamage()
+        {
+            if (!IsOn || !_model.HasEnergy() || !TryChargeLoss())
+                return;
+
+            if (Time.time - _model._lastDamageTime < _model.DamageCooldown)
+                return;
+
+            _model._lastDamageTime = Time.time;
+
             float radius = Radius * Mathf.Max(transform.lossyScale.y, transform.lossyScale.z);
-            float height = Mathf.Max(0, Height * transform.lossyScale.x - 2 * radius);
 
-            Vector3 offset = transform.right * (height / 2); // Ориентируем вдоль оси X
-            Vector3 start = capsuleCenter - offset;
-            Vector3 end = capsuleCenter + offset;
-
-            RaycastHit[] cols = Physics.RaycastAll(transform.position, transform.forward, radius);
-            foreach (var col in cols)
+            if (Physics.Raycast(transform.position, transform.forward, out var hit, radius))
             {
-                if (col.collider.gameObject != gameObject) // Исключаем саму себя
+                Debug.Log(hit.collider ? $"HIT OBJECT = <color=yellow>{hit.collider.gameObject.name}</color>" : "No hit detected.");
+
+                if (hit.collider.gameObject != gameObject)
                 {
-                    if (col.collider.gameObject.TryGetComponent(out MonsterModel presenter))
+                    if(hit.collider.TryGetComponent(out MonsterModel monsterModel))
                     {
-                        presenter.AddHealth(-Time.deltaTime * 20);
-                        print("MONSTER DETECTED");
-                        return presenter;
+                        ApplyDamageToMonster(monsterModel);
                     }
-                        
                 }
             }
-
-            return null;
         }
 
-        
-        
+        [Server]
+        private bool TryChargeLoss()
+        {
+            if (Time.time - _model._lastlossTime < _model.ChargeLossCooldown)
+                return false;
+
+            _model.ChangeChargeLevel(-_model.ChargeLoss);
+            _model._lastlossTime = Time.time;
+
+            return true;
+        }
+
+        [Server]
+        private void ApplyDamageToMonster(MonsterModel monster)
+        {
+            if (monster == null || monster.GetHealth() <= 0)
+                return;
+
+            monster.ChangeHealth(-_model.LightDamage);
+
+            RpcOnMonsterHit(monster);
+        }
+
+        [ClientRpc]
+        private void RpcOnMonsterHit(MonsterModel monster)
+        {
+           //OnHitLogic
+           PlayHitEffects(monster);
+        }
+
+        private void PlayHitEffects(MonsterModel monster)
+        {
+            //Add visual/audio effects here
+            Debug.Log($"<color=yellow><b>Hit effects</b></color> played on {monster.gameObject.name}");
+        }
+
         void OnDrawGizmos()
         {
             if (!_gizmos)

@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using Develop.Scripts.Core.Lobby;
-using Develop.Scripts.Entities.Player;
 using Mirror;
-using Mirror.Examples.CCU;
 using UnityEngine;
 
 public class MonsterPresenter : NetworkBehaviour
@@ -50,17 +46,6 @@ public class MonsterPresenter : NetworkBehaviour
             HandleInput();
             HandleMovement();
             HandleRotation();
-
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Cursor.lockState = CursorLockMode.Confined;
-                _model.ResetSpeedToDefault();
-            }
-            if(Input.GetKeyDown(KeyCode.R))
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                _model.SetSpeed(1);
-            }
         }
 
         #region Handlers
@@ -77,7 +62,7 @@ public class MonsterPresenter : NetworkBehaviour
             if (!_model.CanMove)
                 return;
 
-            Vector3 move = transform.TransformDirection(_inputMove) * _model.MoveSpeed;
+            Vector3 move = transform.TransformDirection(_inputMove) * _model.GetMoveSpeed();
             move.y = Physics.gravity.y;
 
             _view.CharacterController.Move(move * Time.deltaTime);

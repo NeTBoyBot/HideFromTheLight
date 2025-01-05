@@ -8,6 +8,7 @@ public class MonsterPresenter : NetworkBehaviour
     private MonsterModel _model = null;
     private MonsterView _view = null;
     private PlayerIdentification _identification = null;
+    private MonsterAbilities _abilities = null;
 
     private void Start()
     {
@@ -37,8 +38,9 @@ public class MonsterPresenter : NetworkBehaviour
         _view = GetComponent<MonsterView>();
         _model = GetComponent<MonsterModel>();
         _identification = GetComponentInParent<PlayerIdentification>();
+        _abilities = GetComponent<MonsterAbilities>();
 
-        _model.Initialize();
+        _model.Initialize(_abilities);
     }
 
     private void Update()
@@ -87,7 +89,7 @@ public class MonsterPresenter : NetworkBehaviour
 
     #region Rigidbody logic
 
-    public async UniTask<bool> SetUnmanterializeState(bool value) => await _model.EnterUnmaterializeForm(value);
+    public async UniTask<bool> EnterUnmaterializeForm(bool value) => await _model.EnterUnmaterializeForm(value);
 
     #endregion
 }

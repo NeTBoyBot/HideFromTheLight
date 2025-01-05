@@ -37,7 +37,7 @@ public class MonsterAbilities : NetworkBehaviour
     [Command]
     public async void CmdMaterialize()
     {
-        bool canMaterialized = await _presetner.SetUnmanterializeState(false);
+        bool canMaterialized = await _presetner.EnterUnmaterializeForm(false);
         if (!canMaterialized) 
             return;
 
@@ -46,7 +46,7 @@ public class MonsterAbilities : NetworkBehaviour
     [Command]
     public async void CmdUnMaterialize()
     {
-        bool canUnMaterialized = await _presetner.SetUnmanterializeState(true);
+        bool canUnMaterialized = await _presetner.EnterUnmaterializeForm(true);
         if (!canUnMaterialized)
             return;
 

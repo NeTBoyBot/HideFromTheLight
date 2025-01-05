@@ -9,7 +9,8 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
         public event Action OnOutOfCharge;
 
         [Header("Damage settings")]
-        public float LightDamage;
+        [SyncVar] public float LightDamage;
+
         [Range(0.0001f, 5f)] public float DamageCooldown = 0.1f;
         [HideInInspector] public float _lastDamageTime;
 

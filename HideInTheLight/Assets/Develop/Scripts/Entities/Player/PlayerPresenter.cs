@@ -14,11 +14,6 @@ namespace Develop.Scripts.Entities.Player
 
         private IInteractable _activeItem;
 
-        private Vector2 _inputLook = Vector2.zero;
-        private Vector3 _inputMove = Vector2.zero;
-
-        private float _cameraPitch;
-
         private void Start()
         {
             _activeItem = GetComponentInChildren<FlashLightPresenter>();
@@ -54,6 +49,9 @@ namespace Develop.Scripts.Entities.Player
             HandleMovement();
             HandleRotation();
 
+            HandleInteractions();
+            HandleMenuInput();
+
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
@@ -61,13 +59,30 @@ namespace Develop.Scripts.Entities.Player
             }
         }
 
-        #region Handlers
+        #region Interact Handlers
+        private void HandleInteractions()
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                _activeItem.Interact();
+            }
+        }
+
+        private void HandleMenuInput()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                _view.ToggleMenu();
+            }
+        }
+
+        #region Movement Handlers
         private void HandleInput()
         {
-            _inputMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            _model.InputMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
-            _inputLook.x = Input.GetAxis("Mouse X") * _model.LookSensitivity;
-            _inputLook.y = Input.GetAxis("Mouse Y") * _model.LookSensitivity;
+            _model.InputLook.x = Input.GetAxis("Mouse X") * _model.LookSensitivity;
+            _model.InputLook.y = Input.GetAxis("Mouse Y") * _model.LookSensitivity;
         }
 
         private void HandleMovement()
@@ -75,7 +90,7 @@ namespace Develop.Scripts.Entities.Player
             if (!_model.CanMove)
                 return;
 
-            Vector3 move = transform.TransformDirection(_inputMove) * _model.MoveSpeed;
+            Vector3 move = transform.TransformDirection(_model.InputMove) * _model.MoveSpeed;
             move.y = Physics.gravity.y;
 
             _view.CharacterController.Move(move * Time.deltaTime);
@@ -86,13 +101,16 @@ namespace Develop.Scripts.Entities.Player
             if (!_model.CanRotate)
                 return;
 
-            transform.Rotate(0, _inputLook.x, 0);
+            transform.Rotate(0, _model.InputLook.x, 0);
 
-            _cameraPitch -= _inputLook.y;
-            _cameraPitch = Mathf.Clamp(_cameraPitch, -_model.LookUpAngle, _model.LookDownAngle);
+            _model.CameraPitch -= _model.InputLook.y;
+            _model.CameraPitch = Mathf.Clamp(_model.CameraPitch, -_model.LookUpAngle, _model.LookDownAngle);
 
-            _view.Camera.transform.localRotation = Quaternion.Euler(_cameraPitch, 0, 0);
+            _view.Camera.transform.localRotation = Quaternion.Euler(_model.CameraPitch, 0, 0);
         }
+
+        #endregion
         #endregion
     }
+
 }

@@ -1,5 +1,6 @@
 using System;
 using Mirror;
+using Mirror.Examples.Basic;
 using UnityEngine;
 
 public class MonsterModel : NetworkBehaviour
@@ -14,12 +15,26 @@ public class MonsterModel : NetworkBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [field: SerializeField] private float baseMoveSpeed { get; set; } = 5f;
 
-    [field: SerializeField] public bool CanMove = true;
-    [field: SerializeField] public bool CanRotate = true;
+    [field: SerializeField] public bool CanMove { get; private set; } = true;
+    [field: SerializeField] public bool CanRotate { get; private set; } = true;
+    [field: Header("Movement settings/Unmaterialized form")]
+    [field: SerializeField] public LayerMask ExcludeLayers { get; private set; }
+    [field: SerializeField] public LayerMask LayerNothing { get; private set; }
 
     [Header("Health settings")]
     [SyncVar(hook = nameof(OnHealthChanged))]
     [SerializeField] private float health = 100;
+
+    public Vector2 InputLook = Vector2.zero;
+    public Vector3 InputMove = Vector2.zero;
+
+    public float CameraPitch;
+    public CharacterController CharacterController;
+
+    public void Initialize()
+    {
+
+    }
 
     public event Action OnDieEvent;
 
@@ -140,5 +155,14 @@ public class MonsterModel : NetworkBehaviour
     //        }
     //    }
     //}
+
+    //materialized form ability
+
+    public void SetUnmanterializeState(bool value)
+    {
+        CharacterController.excludeLayers = value ? ExcludeLayers : LayerNothing;
+        Debug.Log($"NoClip mode is now {(value ? "enabled" : "disabled")}.");
+    }
+
     #endregion
 }

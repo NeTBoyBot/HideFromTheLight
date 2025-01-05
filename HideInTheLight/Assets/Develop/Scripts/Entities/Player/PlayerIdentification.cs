@@ -29,6 +29,15 @@ namespace Develop.Scripts.Core.Lobby
                 HumanObject.SetActive(true);
                 //Destroy(MonsterObject);
             }
+
+            ChangeCursorState(false, CursorLockMode.Locked);
+        }
+
+
+        public void ChangeCursorState(bool visible, CursorLockMode lockMode)
+        {
+            Cursor.visible = visible;
+            Cursor.lockState = lockMode;
         }
 
         public void Initialize(string name, int id, string role)

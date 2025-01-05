@@ -14,10 +14,15 @@ namespace Develop.Scripts.Entities.Player
         [field: Header("Movement settings")]
         [field: SyncVar(hook = nameof(SyncVarSetSpeed))]
         [field: SerializeField] public float MoveSpeed { get; private set; } = 5f;
-        [field: SerializeField] private float baseMoveSpeed { get; set; } = 5f;
+        [field: SerializeField] private float BaseMoveSpeed { get; set; } = 5f;
 
         [field: SerializeField] public bool CanMove = true;
         [field: SerializeField] public bool CanRotate = true;
+
+        public Vector2 InputLook = Vector2.zero;
+        public Vector3 InputMove = Vector2.zero;
+        
+        public float CameraPitch;
 
         public void SetSpeed(float newSpeed)
         {
@@ -36,6 +41,6 @@ namespace Develop.Scripts.Entities.Player
         }
 
         //¬осстановление базовой скорости через сервер
-        public void ResetSpeedToDefault() => MoveSpeed = baseMoveSpeed;
+        public void ResetSpeedToDefault() => MoveSpeed = BaseMoveSpeed;
     }
 }

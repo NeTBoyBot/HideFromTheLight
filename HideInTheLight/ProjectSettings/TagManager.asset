@@ -14,8 +14,8 @@ TagManager:
   - Monster
   - CameraFxLayer
   - Form
-  - 
-  - 
+  - PassableWalls
+  - ImpassableWalls
   - 
   - 
   - 

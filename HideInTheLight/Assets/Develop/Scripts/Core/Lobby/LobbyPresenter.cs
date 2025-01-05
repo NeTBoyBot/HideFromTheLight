@@ -1,6 +1,7 @@
 using DI;
 using Mirror;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 public enum PlayerRole
 {
     None,
@@ -39,15 +40,23 @@ namespace Develop.Scripts.Core.Lobby
 
         public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
         {
-            Debug.Log($"Disconnected : {conn.connectionId}");
+            Debug.Log($"Room Disconnected ID : {conn.connectionId}");
+
             var roomPlayer = conn.identity.GetComponent<NetworkRoomPlayer>();
 
-            if(roomPlayer != null && roomPlayer.RoleName == "Monster")
+            if (roomPlayer != null && roomPlayer.RoleName == "Monster")
             {
                 _model.RpcMonsterSelectBtnSetActive(true);
             }
 
             base.OnRoomServerDisconnect(conn);
+        }
+
+        public override void OnServerDisconnect(NetworkConnectionToClient conn)
+        {
+            Debug.Log($"Server Disconnected ID : {conn.connectionId}");
+
+            base.OnServerDisconnect(conn);
         }
 
         //Вызывается раньше, чем OnServerAddPlayer
@@ -62,14 +71,7 @@ namespace Develop.Scripts.Core.Lobby
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
-            if(conn.identity != null)
-            {
-                Debug.LogError("Player has already added for this connection");
-                return;
-            }
-
             base.OnServerAddPlayer(conn);
-
 
             var roomPlayer = conn.identity.GetComponent<NetworkRoomPlayer>();
 

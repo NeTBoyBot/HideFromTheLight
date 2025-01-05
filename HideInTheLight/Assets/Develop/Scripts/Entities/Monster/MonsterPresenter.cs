@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Develop.Scripts.Core.Lobby;
 using Mirror;
 using UnityEngine;
@@ -86,7 +87,7 @@ public class MonsterPresenter : NetworkBehaviour
 
     #region Rigidbody logic
 
-    public void SetUnmanterializeState(bool value) => _model.SetUnmanterializeState(value);
+    public async UniTask<bool> SetUnmanterializeState(bool value) => await _model.EnterUnmaterializeForm(value);
 
     #endregion
 }

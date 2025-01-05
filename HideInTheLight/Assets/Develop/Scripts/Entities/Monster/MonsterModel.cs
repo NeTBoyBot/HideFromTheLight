@@ -14,11 +14,11 @@ public class MonsterModel : NetworkBehaviour
 
     [Header("Movement settings")]
     [SyncVar(hook = nameof(OnSpeedChanged))]
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float _moveSpeed = 5f;
     private float _baseMoveSpeed { get; set; } = 5f;
 
     [SyncVar]
-    [Min(0.1f), SerializeField] private float speedMultiplier = 1f;
+    [Min(0.1f), SerializeField] private float _speedMultiplier = 1f;
     [field: SerializeField] public bool CanMove { get; private set; } = true;
     [field: SerializeField] public bool CanRotate { get; private set; } = true;
 
@@ -29,7 +29,8 @@ public class MonsterModel : NetworkBehaviour
     [field: Min(0),SerializeField] public float MaterializeTime { get; private set; }
     [field: Min(0), SerializeField] public float UnmaterializeTime { get; private set; }
     [field: Min(0.1f), SerializeField] public float TransformationSlowness { get; private set; }
- 
+
+
 
     [Header("Health settings")]
     [SyncVar(hook = nameof(OnHealthChanged))]
@@ -42,9 +43,13 @@ public class MonsterModel : NetworkBehaviour
     [field: HideInInspector] public CharacterController CharacterController { get; private set; } = null;
 
     [Header("Other settings")]
-    private bool _canTransformation = true;
+    public bool IsTransforming = false;
     private CancellationTokenSource _source = new();
+    private MonsterAbilities _abilities;
 
+    public event Action OnDieEvent;
+
+    #region Initialize
     private void OnEnable()
     {
         if (_source.IsCancellationRequested || _source == null)
@@ -59,13 +64,14 @@ public class MonsterModel : NetworkBehaviour
         _source?.Dispose();
     }
 
-    public void Initialize()
+    public void Initialize(MonsterAbilities abilities)
     {
         CharacterController = GetComponent<CharacterController>();
-        _baseMoveSpeed = moveSpeed;
+        _abilities = abilities;
+        _baseMoveSpeed = _moveSpeed;
     }
 
-    public event Action OnDieEvent;
+    #endregion
 
     #region Health&Death Logic
 
@@ -87,12 +93,12 @@ public class MonsterModel : NetworkBehaviour
     private void HandleDeath()
     {
         Debug.Log($"<color=red>[Server]</color> HandleDeath called for {gameObject.name}");
-        Vector3 respawnPosition = new Vector3(2.5f, 20, -2);
+        Vector3 respawnPosition = new(2.5f, 20, -2);
 
-        // Set position on server first
+        //Set position on server first
         transform.position = respawnPosition;
 
-        // Then notify clients
+        //Then notify clients
         RpcHandleDeath(respawnPosition);
     }
 
@@ -108,10 +114,10 @@ public class MonsterModel : NetworkBehaviour
     {
         Debug.Log($"<color=green>[Client]</color> RpcHandleDeath called for {gameObject.name}");
 
-        // Set position directly
+        //Set position directly
         transform.position = respawnPosition;
 
-        // Trigger any death effects/animations
+        //Trigger any death effects/animations
         OnDieEvent?.Invoke();
 
         if (isServer)
@@ -131,16 +137,24 @@ public class MonsterModel : NetworkBehaviour
         if (newSpeed < 0) 
             return;
 
-        moveSpeed = newSpeed;
+        _moveSpeed = newSpeed;
     }
 
     [Server]
-    public void ResetSpeedToDefault() => moveSpeed = _baseMoveSpeed;
+    public void ResetSpeedToDefault() => _moveSpeed = _baseMoveSpeed;
+    public float GetMoveSpeed(bool withSpeedMultiplier = true)
+    {
+        if (withSpeedMultiplier)
+        {
+            return _moveSpeed * _speedMultiplier;
+        }
 
-    public float GetMoveSpeed() => moveSpeed * speedMultiplier;
-    public float GetSpeedMultipler() => speedMultiplier;
-    public void SetSpeedMultiplier(float value) => speedMultiplier = Mathf.Clamp(value, 0.1f, 10f);
-    public void ModifySpeedMultiplier(float delta) => SetSpeedMultiplier(speedMultiplier + delta);
+        return _moveSpeed;
+    }
+
+    public float GetSpeedMultipler() => _speedMultiplier;
+    public void SetSpeedMultiplier(float value) => _speedMultiplier = Mathf.Clamp(value, 0.1f, 10f);
+    public void ModifySpeedMultiplier(float delta) => SetSpeedMultiplier(_speedMultiplier + delta);
     public void ResetSpeedMultiplier() => SetSpeedMultiplier(1);
 
     #endregion
@@ -193,25 +207,33 @@ public class MonsterModel : NetworkBehaviour
 
     public async UniTask<bool> EnterUnmaterializeForm(bool canPassThrough)
     {
-        if (!_canTransformation)
+        if (IsTransforming)
             return false;
 
-        _canTransformation = false;
+        IsTransforming = true;
         ModifySpeedMultiplier(-TransformationSlowness);
 
         var transformationTime = canPassThrough ? MaterializeTime : UnmaterializeTime;
 
         await UniTask.Delay(
-            TimeSpan.FromSeconds(transformationTime), 
+            TimeSpan.FromSeconds(transformationTime),
             cancellationToken: _source.Token);
 
         CharacterController.excludeLayers = canPassThrough ? ExcludeLayers : DefaultLayer;
 
-        _canTransformation = true;
+        IsTransforming = false;
         ResetSpeedMultiplier();
 
         return true;
     }
 
     #endregion
+
+    [Server]
+    public void Respawn()
+    {
+        HandleDeath();
+    }
+
+    public bool Materialized() => _abilities.Materialized;
 }

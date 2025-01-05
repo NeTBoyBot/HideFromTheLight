@@ -120,6 +120,12 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
                 {
                     if(hit.collider.TryGetComponent(out MonsterModel monsterModel))
                     {
+                        if (monsterModel.IsTransforming && !monsterModel.Materialized())
+                        {
+                            monsterModel.Respawn();
+                            return;
+                        }
+
                         ApplyDamageToMonster(monsterModel);
                     }
                 }
@@ -144,7 +150,11 @@ namespace Develop.Scripts.Items.LightSources.FlashLight
             if (monster == null || monster.GetHealth() <= 0)
                 return;
 
-            monster.ChangeHealth(-_model.LightDamage);
+            var damage = monster.Materialized() 
+                ? -_model.LightDamage 
+                : -_model.LightDamage * 2;
+
+            monster.ChangeHealth(damage);
 
             RpcOnMonsterHit(monster);
         }

@@ -1,6 +1,7 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Mirror;
-using Mirror.Examples.Basic;
 using UnityEngine;
 
 public class MonsterModel : NetworkBehaviour
@@ -10,30 +11,58 @@ public class MonsterModel : NetworkBehaviour
     [field: SerializeField, Range(0, 120)] public float LookUpAngle { get; private set; } = 60;
     [field: SerializeField] public float LookSensitivity { get; private set; } = 2f;
 
-    [field: Header("Movement settings")]
+
+    [Header("Movement settings")]
     [SyncVar(hook = nameof(OnSpeedChanged))]
     [SerializeField] private float moveSpeed = 5f;
-    [field: SerializeField] private float baseMoveSpeed { get; set; } = 5f;
+    private float _baseMoveSpeed { get; set; } = 5f;
 
+    [SyncVar]
+    [Min(0.1f), SerializeField] private float speedMultiplier = 1f;
     [field: SerializeField] public bool CanMove { get; private set; } = true;
     [field: SerializeField] public bool CanRotate { get; private set; } = true;
+
+
     [field: Header("Movement settings/Unmaterialized form")]
     [field: SerializeField] public LayerMask ExcludeLayers { get; private set; }
-    [field: SerializeField] public LayerMask LayerNothing { get; private set; }
+    [field: SerializeField] public LayerMask DefaultLayer { get; private set; }
+    [field: Min(0),SerializeField] public float MaterializeTime { get; private set; }
+    [field: Min(0), SerializeField] public float UnmaterializeTime { get; private set; }
+    [field: Min(0.1f), SerializeField] public float TransformationSlowness { get; private set; }
+ 
 
     [Header("Health settings")]
     [SyncVar(hook = nameof(OnHealthChanged))]
     [SerializeField] private float health = 100;
 
-    public Vector2 InputLook = Vector2.zero;
-    public Vector3 InputMove = Vector2.zero;
+    [HideInInspector] public Vector2 InputLook = Vector2.zero;
+    [HideInInspector] public Vector3 InputMove = Vector2.zero;
 
-    public float CameraPitch;
-    public CharacterController CharacterController;
+    [HideInInspector] public float CameraPitch = 0;
+    [field: HideInInspector] public CharacterController CharacterController { get; private set; } = null;
+
+    [Header("Other settings")]
+    private bool _canTransformation = true;
+    private CancellationTokenSource _source = new();
+
+    private void OnEnable()
+    {
+        if (_source.IsCancellationRequested || _source == null)
+        {
+            _source = new CancellationTokenSource();
+        }
+    }
+
+    private void OnDisable()
+    {
+        _source?.Cancel();
+        _source?.Dispose();
+    }
 
     public void Initialize()
     {
-
+        CharacterController = GetComponent<CharacterController>();
+        _baseMoveSpeed = moveSpeed;
     }
 
     public event Action OnDieEvent;
@@ -106,9 +135,13 @@ public class MonsterModel : NetworkBehaviour
     }
 
     [Server]
-    public void ResetSpeedToDefault() => moveSpeed = baseMoveSpeed;
+    public void ResetSpeedToDefault() => moveSpeed = _baseMoveSpeed;
 
-    public float GetMoveSpeed() => moveSpeed;
+    public float GetMoveSpeed() => moveSpeed * speedMultiplier;
+    public float GetSpeedMultipler() => speedMultiplier;
+    public void SetSpeedMultiplier(float value) => speedMultiplier = Mathf.Clamp(value, 0.1f, 10f);
+    public void ModifySpeedMultiplier(float delta) => SetSpeedMultiplier(speedMultiplier + delta);
+    public void ResetSpeedMultiplier() => SetSpeedMultiplier(1);
 
     #endregion
 
@@ -158,10 +191,26 @@ public class MonsterModel : NetworkBehaviour
 
     //materialized form ability
 
-    public void SetUnmanterializeState(bool value)
+    public async UniTask<bool> EnterUnmaterializeForm(bool canPassThrough)
     {
-        CharacterController.excludeLayers = value ? ExcludeLayers : LayerNothing;
-        Debug.Log($"NoClip mode is now {(value ? "enabled" : "disabled")}.");
+        if (!_canTransformation)
+            return false;
+
+        _canTransformation = false;
+        ModifySpeedMultiplier(-TransformationSlowness);
+
+        var transformationTime = canPassThrough ? MaterializeTime : UnmaterializeTime;
+
+        await UniTask.Delay(
+            TimeSpan.FromSeconds(transformationTime), 
+            cancellationToken: _source.Token);
+
+        CharacterController.excludeLayers = canPassThrough ? ExcludeLayers : DefaultLayer;
+
+        _canTransformation = true;
+        ResetSpeedMultiplier();
+
+        return true;
     }
 
     #endregion

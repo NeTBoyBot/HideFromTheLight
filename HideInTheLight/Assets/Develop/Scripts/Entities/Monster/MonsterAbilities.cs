@@ -35,16 +35,22 @@ public class MonsterAbilities : NetworkBehaviour
     }
 
     [Command]
-    public void CmdMaterialize()
+    public async void CmdMaterialize()
     {
+        bool canMaterialized = await _presetner.SetUnmanterializeState(false);
+        if (!canMaterialized) 
+            return;
+
         RpcMaterialize();
-        _presetner.SetUnmanterializeState(false);
     }
     [Command]
-    public void CmdUnMaterialize()
+    public async void CmdUnMaterialize()
     {
+        bool canUnMaterialized = await _presetner.SetUnmanterializeState(true);
+        if (!canUnMaterialized)
+            return;
+
         RpcUnMaterialize();
-        _presetner.SetUnmanterializeState(true);
     }
 
     [ClientRpc]

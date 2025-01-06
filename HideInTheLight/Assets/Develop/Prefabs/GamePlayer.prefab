@@ -200,11 +200,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 314976527061562325, guid: 0f177ee09f6c10c4f8ce806aad923046,
         type: 3}
-      propertyPath: _materializedForm
-      value: 
-      objectReference: {fileID: 279270853916783389}
-    - target: {fileID: 314976527061562325, guid: 0f177ee09f6c10c4f8ce806aad923046,
-        type: 3}
       propertyPath: _unMaterializedForm
       value: 
       objectReference: {fileID: 4419553736566533313}
@@ -306,17 +301,12 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 141690945631449068, guid: 0f177ee09f6c10c4f8ce806aad923046, type: 3}
     - {fileID: 0}
+    - {fileID: 5228207497666722838, guid: 0f177ee09f6c10c4f8ce806aad923046, type: 3}
     m_RemovedGameObjects:
     - {fileID: 4544721433784872778, guid: 0f177ee09f6c10c4f8ce806aad923046, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f177ee09f6c10c4f8ce806aad923046, type: 3}
---- !u!23 &279270853916783389 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8377085758359544950, guid: 0f177ee09f6c10c4f8ce806aad923046,
-    type: 3}
-  m_PrefabInstance: {fileID: 8620250608925235051}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1200778006280513222 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7425113612830044589, guid: 0f177ee09f6c10c4f8ce806aad923046,

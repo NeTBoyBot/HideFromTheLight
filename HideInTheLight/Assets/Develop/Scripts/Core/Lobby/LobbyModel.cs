@@ -19,6 +19,8 @@ namespace Develop.Scripts.Core.Lobby
         [SerializeField] public TMP_InputField NicknameField;
         [SerializeField] public Button HumanSelectButton, MonsterSelectButton;
 
+        public event Action<NetworkConnectionToClient, PlayerRole> OnRoleSelected;
+
         [TargetRpc]
         public void TargetRpcNicknamePanelSetActive(NetworkConnectionToClient conn, bool value)
         {
@@ -49,7 +51,7 @@ namespace Develop.Scripts.Core.Lobby
         [Command(requiresAuthority = false)]
         public void CmdHumanSelectBtn(NetworkConnectionToClient conn)
         {
-            var roomPlayer = conn.identity.GetComponent<NetworkRoomPlayer>();
+            var roomPlayer = conn.identity.GetComponent<NetworkRoomMyPlayer>();
 
             var monsterConnection = HasMonsterInRoom();
 
@@ -57,17 +59,20 @@ namespace Develop.Scripts.Core.Lobby
             {
                 roomPlayer.SetRoleName("Human");
                 RpcMonsterSelectBtnSetActive(true);
+
+                OnRoleSelected?.Invoke(conn, PlayerRole.Human);
                 return;
             }
 
             roomPlayer.SetRoleName("Human");
+            OnRoleSelected?.Invoke(conn, PlayerRole.Human);
 
             RpcConsoleDebug($"{roomPlayer.Name} Selected Human");
         }
         [Command(requiresAuthority = false)]
         public void CmdMonsterSelectBtn(NetworkConnectionToClient conn)
         {
-            var roomPlayer = conn.identity.GetComponent<NetworkRoomPlayer>();
+            var roomPlayer = conn.identity.GetComponent<NetworkRoomMyPlayer>();
 
             var monsterConnection = HasMonsterInRoom();
 
@@ -77,11 +82,13 @@ namespace Develop.Scripts.Core.Lobby
             roomPlayer.SetRoleName("Monster");
             RpcMonsterSelectBtnSetActive(false);
 
+            OnRoleSelected?.Invoke(conn, PlayerRole.Monster);
+
             RpcConsoleDebug($"{roomPlayer.Name} Selected Monster");
         }
 
-        private bool HasMonsterInRoom() => NetworkServer.connections.Values
-            .Any(m => m.identity.GetComponent<NetworkRoomPlayer>().RoleName == "Monster");
+        public bool HasMonsterInRoom() => NetworkServer.connections.Values
+            .Any(m=> m.identity != null && m.identity.GetComponent<NetworkRoomMyPlayer>().RoleName == "Monster");
 
         [ClientRpc]
         private void RpcConsoleDebug(string message)
@@ -108,13 +115,13 @@ namespace Develop.Scripts.Core.Lobby
         public void CmdSetupNicknameInput(string nickname, NetworkConnectionToClient conn)
         {
             //Отправляем на сервер и присваиваем имя игроку
-            var roomPlayer = conn.identity.GetComponent<NetworkRoomPlayer>();
+            var roomPlayer = conn.identity.GetComponent<NetworkRoomMyPlayer>();
             if (roomPlayer != null && !string.IsNullOrWhiteSpace(nickname))
             {
                 nickname = nickname.Trim();
 
                 roomPlayer.SetName(nickname);
-                roomPlayer.ShowRoomGUI(true);
+                //roomPlayer.ShowRoomGUI(true);
 
                 OnNameAssigned?.Invoke(nickname, conn);
 
@@ -126,6 +133,11 @@ namespace Develop.Scripts.Core.Lobby
             }
         }
 
+        public void EnableCursor()
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
+        }
         private void OnDestroy() => OnNameAssigned = null;
     }
 }

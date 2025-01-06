@@ -16,5 +16,17 @@ namespace Develop.Scripts.Core.Lobby
         public void RpcSetSpawnPosition(NetworkRoomPlayer player) 
             => player.transform.position = new Vector3(_firstSpawnPosition.x += _offsetPosition, 0, 0);
 
+
+        public void ChangePlayerInRoom(NetworkConnectionToClient conn, PlayerRole role)
+        {
+            NetworkRoomMyPlayer roomPlayer = conn.identity.GetComponent<NetworkRoomMyPlayer>();
+
+            if (role == PlayerRole.Human)
+            {
+                roomPlayer.RpcSetHumanSkin();
+                return;
+            }
+            roomPlayer.RpcSetMonsterSkin();
+        }
     }
 }

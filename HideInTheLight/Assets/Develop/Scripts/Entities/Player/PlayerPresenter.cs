@@ -53,6 +53,7 @@ namespace Develop.Scripts.Entities.Player
             HandleMenuInput();
 
 
+
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 _activeItem.Interact();
@@ -72,14 +73,14 @@ namespace Develop.Scripts.Entities.Player
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                _view.ToggleMenu();
+                _view.ToggleMenu(_identification);
             }
         }
 
         #region Movement Handlers
         private void HandleInput()
         {
-            _model.InputMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            _model.InputMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
 
             _model.InputLook.x = Input.GetAxis("Mouse X") * _model.LookSensitivity;
             _model.InputLook.y = Input.GetAxis("Mouse Y") * _model.LookSensitivity;

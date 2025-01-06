@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MonsterAbilities : NetworkBehaviour
 {
-    [SerializeField] private MeshRenderer _materializedForm;
+    [SerializeField] private GameObject _materializedForm;
     [SerializeField] private GameObject _unMaterializedForm;
     [SyncVar] public bool Materialized = true;
 
@@ -16,6 +16,9 @@ public class MonsterAbilities : NetworkBehaviour
 
     private void Update()
     {
+        if (!isLocalPlayer)
+            return;
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             ChangeMaterializationState(); 
@@ -58,7 +61,7 @@ public class MonsterAbilities : NetworkBehaviour
     {
         _unMaterializedForm.SetActive(false);
 
-        _materializedForm.enabled = true;
+        _materializedForm.SetActive(true);
         Materialized = true;
 
     }
@@ -67,7 +70,7 @@ public class MonsterAbilities : NetworkBehaviour
     {
         _unMaterializedForm.SetActive(true);
 
-        _materializedForm.enabled = false;
+        _materializedForm.SetActive(false);
         Materialized = false;
     }
 }

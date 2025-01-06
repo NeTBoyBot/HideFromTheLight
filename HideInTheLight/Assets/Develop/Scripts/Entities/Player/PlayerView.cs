@@ -1,3 +1,4 @@
+using Develop.Scripts.Core.Lobby;
 using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,11 +16,13 @@ namespace Develop.Scripts.Entities.Player
         public Image MenuPanel;
 
 
-        public void ToggleMenu()
+        public void ToggleMenu(PlayerIdentification identification)
         {
             bool isMenuActive = MenuPanel.gameObject.activeInHierarchy;
 
             MenuPanel.gameObject.SetActive(!isMenuActive);
+
+            identification.ChangeCursorState(!isMenuActive, !isMenuActive ? CursorLockMode.Confined : CursorLockMode.Locked);
         }
     }
 }

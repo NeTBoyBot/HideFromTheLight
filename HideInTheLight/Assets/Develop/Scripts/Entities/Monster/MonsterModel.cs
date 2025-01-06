@@ -26,7 +26,9 @@ public class MonsterModel : NetworkBehaviour
     [field: Header("Movement settings/Unmaterialized form")]
     [field: SerializeField] public LayerMask ExcludeLayers { get; private set; }
     [field: SerializeField] public LayerMask DefaultLayer { get; private set; }
+    [field: SyncVar]
     [field: Min(0),SerializeField] public float MaterializeTime { get; private set; }
+    [field: SyncVar]
     [field: Min(0), SerializeField] public float UnmaterializeTime { get; private set; }
     [field: Min(0.1f), SerializeField] public float TransformationSlowness { get; private set; }
 
@@ -43,11 +45,12 @@ public class MonsterModel : NetworkBehaviour
     [field: HideInInspector] public CharacterController CharacterController { get; private set; } = null;
 
     [Header("Other settings")]
-    public bool IsTransforming = false;
+    [SyncVar] public bool IsTransforming = false;
     private CancellationTokenSource _source = new();
     private MonsterAbilities _abilities;
 
     public event Action OnDieEvent;
+    public event Action<float> onHealthChanged;
 
     #region Initialize
     private void OnEnable()
@@ -66,7 +69,7 @@ public class MonsterModel : NetworkBehaviour
 
     public void Initialize(MonsterAbilities abilities)
     {
-        CharacterController = GetComponent<CharacterController>();
+        CharacterController = GetComponentInChildren<CharacterController>();
         _abilities = abilities;
         _baseMoveSpeed = _moveSpeed;
     }
@@ -142,6 +145,7 @@ public class MonsterModel : NetworkBehaviour
 
     [Server]
     public void ResetSpeedToDefault() => _moveSpeed = _baseMoveSpeed;
+
     public float GetMoveSpeed(bool withSpeedMultiplier = true)
     {
         if (withSpeedMultiplier)
@@ -149,14 +153,13 @@ public class MonsterModel : NetworkBehaviour
             return _moveSpeed * _speedMultiplier;
         }
 
-        return _moveSpeed;
+        return _moveSpeed * _speedMultiplier;
     }
 
     public float GetSpeedMultipler() => _speedMultiplier;
     public void SetSpeedMultiplier(float value) => _speedMultiplier = Mathf.Clamp(value, 0.1f, 10f);
     public void ModifySpeedMultiplier(float delta) => SetSpeedMultiplier(_speedMultiplier + delta);
     public void ResetSpeedMultiplier() => SetSpeedMultiplier(1);
-
     #endregion
 
     #region SyncVar Handlers
@@ -176,6 +179,7 @@ public class MonsterModel : NetworkBehaviour
     private void OnHealthChanged(float oldValue, float newValue)
     {
         Debug.Log($"<color=yellow>[HealthSync]</color> changed from {oldValue} to {newValue}");
+        onHealthChanged?.Invoke(newValue);
     }
     #endregion
 
@@ -222,9 +226,17 @@ public class MonsterModel : NetworkBehaviour
         CharacterController.excludeLayers = canPassThrough ? ExcludeLayers : DefaultLayer;
 
         IsTransforming = false;
+        RpcEnterUnmaterializeForm(canPassThrough);
+
         ResetSpeedMultiplier();
 
         return true;
+    }
+
+    [ClientRpc]
+    private void RpcEnterUnmaterializeForm(bool canPassThrough)
+    {
+        CharacterController.excludeLayers = canPassThrough ? ExcludeLayers : DefaultLayer;
     }
 
     #endregion

@@ -676,8 +676,9 @@ namespace Mirror
                 GUILayout.EndArea();
             }
 
-            if (Utils.IsSceneActive(RoomScene))
-                GUI.Box(new Rect(10f, 380f, 520f, 150f), "<b>PLAYERS</b>");
+            //Если нужна базовая панель, лучше сделать свою 
+            //if (Utils.IsSceneActive(RoomScene))
+            //    GUI.Box(new Rect(10f, 280f, 1020f, 150f), "<b>PLAYERS</b>");
         }
 
         #endregion

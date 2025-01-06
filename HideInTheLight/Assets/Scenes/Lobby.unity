@@ -137,11 +137,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11414302, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_Size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11414302, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_Value
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22400762, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1439,7 +1439,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -1901,8 +1901,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _firstSpawnPosition: {x: -6, y: 0, z: 0}
-  _offsetPosition: 2
+  _firstSpawnPosition: {x: -9, y: 0, z: 0}
+  _offsetPosition: 3
 --- !u!114 &1609219196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2072,7 +2072,7 @@ MonoBehaviour:
   timeInterpolationGui: 0
   showRoomGUI: 1
   minPlayers: 1
-  roomPlayerPrefab: {fileID: 2458534061620304345, guid: 56b5a3f59ee97b6419b314516c6dc434,
+  roomPlayerPrefab: {fileID: 9111872670231618694, guid: 6d8a088c7b78b6d44b1ba8acd5c42c70,
     type: 3}
   RoomScene: Assets/Scenes/Lobby.unity
   GameplayScene: Assets/Scenes/MainScene.unity

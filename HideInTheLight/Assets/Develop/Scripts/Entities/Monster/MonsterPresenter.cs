@@ -10,6 +10,7 @@ public class MonsterPresenter : NetworkBehaviour
     private PlayerIdentification _identification = null;
     private MonsterAbilities _abilities = null;
 
+    #region Initialize
     private void Start()
     {
         Initialize();
@@ -30,6 +31,7 @@ public class MonsterPresenter : NetworkBehaviour
                 $"\n his net id = <color=cyan>{netId}</color>");
             _view.Camera.enabled = false;
             _view.AudioListener.enabled = false;
+            _view.HUD.SetActive(false);
         }
     }
 
@@ -41,7 +43,17 @@ public class MonsterPresenter : NetworkBehaviour
         _abilities = GetComponent<MonsterAbilities>();
 
         _model.Initialize(_abilities);
+        _view.Initialize();
+
+        SubscribeEvents();
     }
+
+    private void SubscribeEvents()
+    {
+        _model.onHealthChanged += _view.UpdateHealth;
+    }
+
+    #endregion
 
     private void Update()
     {
@@ -51,12 +63,23 @@ public class MonsterPresenter : NetworkBehaviour
         HandleInput();
         HandleMovement();
         HandleRotation();
+        UpdateAnimations();
+
+        HandleMenuInput();
     }
 
     #region Handlers
+    private void HandleMenuInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            _view.ToggleMenu(_identification);
+        }
+    }
+
     private void HandleInput()
     {
-        _model.InputMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        _model.InputMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
 
         _model.InputLook.x = Input.GetAxis("Mouse X") * _model.LookSensitivity;
         _model.InputLook.y = Input.GetAxis("Mouse Y") * _model.LookSensitivity;
@@ -92,4 +115,9 @@ public class MonsterPresenter : NetworkBehaviour
     public async UniTask<bool> EnterUnmaterializeForm(bool value) => await _model.EnterUnmaterializeForm(value);
 
     #endregion
+
+    private void UpdateAnimations()
+    {
+        _view.PlayWalkAnimation(_model.InputMove.sqrMagnitude);
+    }
 }

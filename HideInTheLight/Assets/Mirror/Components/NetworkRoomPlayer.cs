@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.Video;
 
 namespace Mirror
 {
@@ -23,6 +21,7 @@ namespace Mirror
 
         [Header("Diagnostics")]
 
+
         /// <summary>
         /// Diagnostic flag indicating whether this player is ready for the game to begin.
         /// <para>Invoke CmdChangeReadyState method on the client to set this flag.</para>
@@ -39,11 +38,11 @@ namespace Mirror
         [SyncVar(hook = nameof(IndexChanged))]
         public int index;
 
-        [SyncVar]
+        [SyncVar(hook = nameof(NameChanged))]
         public string Name;
 
         [SyncVar, Min(0)]
-        public string RoleName;
+        public string RoleName = "Human";
 
         #region Unity Callbacks
 
@@ -96,6 +95,16 @@ namespace Mirror
                 room.ReadyStatusChanged();
             }
         }
+        [Command]
+        public void CmdChangeReadyState()
+        {
+            readyToBegin = !readyToBegin;
+            NetworkRoomManager room = NetworkManager.singleton as NetworkRoomManager;
+            if (room != null)
+            {
+                room.ReadyStatusChanged();
+            }
+        }
 
         #endregion
 
@@ -114,6 +123,7 @@ namespace Mirror
         /// </summary>
         /// <param name="newReadyState">New Ready State</param>
         public virtual void ReadyStateChanged(bool oldReadyState, bool newReadyState) {}
+        public virtual void NameChanged(string oldName,  string newName) {}
 
         #endregion
 
@@ -157,14 +167,19 @@ namespace Mirror
         }
         void DrawPlayerReadyState()
         {
-            GUILayout.BeginArea(new Rect(20f + (index * 100), 400f, 90f, 130f));
+            GUILayout.BeginArea(new Rect(270f + (index * 100), 380f, 90f, 130f));
 
-            GUILayout.Label($"{Name}\n{RoleName}");
+            GUIStyle centerStyle = new(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter
+            };
+            //GUILayout.Label($"{Name}\n{RoleName}");
+            GUILayout.Label($"<b>{Name}</b>", centerStyle);
 
             if (readyToBegin)
-                GUILayout.Label("<color=green>Ready</color>");
+                GUILayout.Label("<color=green>Ready</color>", centerStyle);
             else
-                GUILayout.Label("Not Ready");
+                GUILayout.Label("Not Ready", centerStyle);
 
             if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("Kick"))
             {
@@ -179,12 +194,16 @@ namespace Mirror
 
         public void SetName(string newName) => Name = newName;
         public void SetRoleName(string roleName) => RoleName = roleName;
-        public void ShowRoomGUI(bool value) => showRoomGUI = value;
+        //public void ShowRoomGUI(bool value) => showRoomGUI = value; //OLD
+        public void ShowRoomGUI(bool value)
+        {
+            
+        }
         void DrawPlayerReadyButton()
         {
             if (NetworkClient.active && isLocalPlayer)
             {
-                GUILayout.BeginArea(new Rect(20f, 500f, 120f, 20f));
+                GUILayout.BeginArea(new Rect(270f, 450f, 120f, 20f));
 
                 if (readyToBegin)
                 {
@@ -198,6 +217,22 @@ namespace Mirror
                 }
 
                 GUILayout.EndArea();
+            }
+        }
+
+
+        public void EnablePlayerReadyButton()
+        {
+            if(NetworkServer.active && isLocalPlayer)
+            {
+                if (readyToBegin)
+                {
+                    CmdChangeReadyState(false);
+                }
+                else
+                {
+                    CmdChangeReadyState(true);
+                }
             }
         }
 

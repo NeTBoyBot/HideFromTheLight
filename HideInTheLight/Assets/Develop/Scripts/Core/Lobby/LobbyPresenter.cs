@@ -37,13 +37,6 @@ namespace Develop.Scripts.Core.Lobby
 
             if (!TryInitializeLobby())
                 return;
-
-            _model.EnableCursor();
-
-            if (_model.HasMonsterInRoom())
-            {
-                _model.RpcMonsterSelectBtnSetActive(false);
-            }
         }
         #endregion
 
@@ -113,6 +106,14 @@ namespace Develop.Scripts.Core.Lobby
 
             _model.TargetRpcNicknamePanelSetActive(conn, true);
             _model.TargetRpcSetupInput(conn);
+
+            if (_model.HasMonsterInRoom())
+            {
+                var monster = _model.GetMonsterInRoom();
+                _model.RpcMonsterSelectBtnSetActive(false);
+                _view.ChangePlayerInRoom(monster, PlayerRole.Monster);
+            }
+
         }
 
         public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer, GameObject gamePlayer)

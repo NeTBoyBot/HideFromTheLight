@@ -30,7 +30,7 @@ namespace Develop.Scripts.Core.Lobby
                 //Destroy(MonsterObject);
             }
 
-            ChangeCursorState(false, CursorLockMode.Locked);
+           // ChangeCursorState(false, CursorLockMode.Locked);
         }
 
 

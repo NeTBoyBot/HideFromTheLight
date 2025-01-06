@@ -46,7 +46,20 @@ public class MonsterView : NetworkBehaviour
         identification.ChangeCursorState(!isMenuActive, !isMenuActive ? CursorLockMode.Confined : CursorLockMode.Locked);
     }
 
-    public void PlayAnimation(string animName) => Animator.Play(animName);
-    public void PlayWalkAnimation(float moveSpeed) => Animator.SetFloat("MoveSpeed", moveSpeed);
+    public void PlayAnimation(string animName)
+    {
+        if (Animator == null)
+            return; 
 
+        Animator.Play(animName);
+    }
+
+    [ClientRpc]
+    public void RpcPlayWalkAnimation(float moveSpeed)
+    {
+        if (Animator == null)
+            return;
+
+        Animator.SetFloat("MoveSpeed", moveSpeed);
+    }
 }

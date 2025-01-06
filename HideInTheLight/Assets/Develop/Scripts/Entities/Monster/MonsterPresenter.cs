@@ -63,7 +63,7 @@ public class MonsterPresenter : NetworkBehaviour
         HandleInput();
         HandleMovement();
         HandleRotation();
-        UpdateAnimations();
+        CmdUpdateAnimations();
 
         HandleMenuInput();
     }
@@ -112,12 +112,13 @@ public class MonsterPresenter : NetworkBehaviour
 
     #region Rigidbody logic
 
-    public async UniTask<bool> EnterUnmaterializeForm(bool value) => await _model.EnterUnmaterializeForm(value);
+    public async UniTask<bool> ToggleMaterializationForm(bool canPassThrough) => await _model.ToggleMaterializationForm(canPassThrough);
 
     #endregion
 
-    private void UpdateAnimations()
+    [Command]
+    private void CmdUpdateAnimations()
     {
-        _view.PlayWalkAnimation(_model.InputMove.sqrMagnitude);
+        _view.RpcPlayWalkAnimation(_model.InputMove.sqrMagnitude);
     }
 }

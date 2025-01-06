@@ -21,6 +21,11 @@ namespace Develop.Scripts.Core.Lobby
 
         public event Action<NetworkConnectionToClient, PlayerRole> OnRoleSelected;
 
+        private void Start()
+        {
+            EnableCursor();
+        }
+
         [TargetRpc]
         public void TargetRpcNicknamePanelSetActive(NetworkConnectionToClient conn, bool value)
         {
@@ -89,6 +94,9 @@ namespace Develop.Scripts.Core.Lobby
 
         public bool HasMonsterInRoom() => NetworkServer.connections.Values
             .Any(m=> m.identity != null && m.identity.GetComponent<NetworkRoomMyPlayer>().RoleName == "Monster");
+
+        public NetworkConnectionToClient GetMonsterInRoom() => NetworkServer.connections.Values
+            .First(m => m.identity != null && m.identity.GetComponent<NetworkRoomMyPlayer>().RoleName == "Monster");
 
         [ClientRpc]
         private void RpcConsoleDebug(string message)

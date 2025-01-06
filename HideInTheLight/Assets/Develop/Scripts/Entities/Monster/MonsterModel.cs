@@ -30,7 +30,7 @@ public class MonsterModel : NetworkBehaviour
     [field: Min(0),SerializeField] public float MaterializeTime { get; private set; }
     [field: SyncVar]
     [field: Min(0), SerializeField] public float UnmaterializeTime { get; private set; }
-    [field: Min(0.1f), SerializeField] public float TransformationSlowness { get; private set; }
+    [field: Min(0.1f), SerializeField, SyncVar] public float TransformationSlowness { get; private set; }
 
 
 
@@ -38,8 +38,8 @@ public class MonsterModel : NetworkBehaviour
     [SyncVar(hook = nameof(OnHealthChanged))]
     [SerializeField] private float health = 100;
 
-    [HideInInspector] public Vector2 InputLook = Vector2.zero;
-    [HideInInspector] public Vector3 InputMove = Vector2.zero;
+    [HideInInspector, SyncVar] public Vector2 InputLook = Vector2.zero;
+    [HideInInspector, SyncVar] public Vector3 InputMove = Vector2.zero;
 
     [HideInInspector] public float CameraPitch = 0;
     [field: HideInInspector] public CharacterController CharacterController { get; private set; } = null;
@@ -158,8 +158,10 @@ public class MonsterModel : NetworkBehaviour
 
     public float GetSpeedMultipler() => _speedMultiplier;
     public void SetSpeedMultiplier(float value) => _speedMultiplier = Mathf.Clamp(value, 0.1f, 10f);
-    public void ModifySpeedMultiplier(float delta) => SetSpeedMultiplier(_speedMultiplier + delta);
-    public void ResetSpeedMultiplier() => SetSpeedMultiplier(1);
+    [ClientRpc]
+    public void RpcModifySpeedMultiplier(float delta) => SetSpeedMultiplier(_speedMultiplier + delta);
+    [ClientRpc]
+    public void RpcResetSpeedMultiplier() => SetSpeedMultiplier(1);
     #endregion
 
     #region SyncVar Handlers
@@ -209,13 +211,14 @@ public class MonsterModel : NetworkBehaviour
 
     //materialized form ability
 
-    public async UniTask<bool> EnterUnmaterializeForm(bool canPassThrough)
+    public async UniTask<bool> ToggleMaterializationForm (bool canPassThrough)
     {
+        Debug.Log("EnterUnmaterializeForm");
         if (IsTransforming)
             return false;
 
         IsTransforming = true;
-        ModifySpeedMultiplier(-TransformationSlowness);
+        RpcModifySpeedMultiplier(-TransformationSlowness);
 
         var transformationTime = canPassThrough ? MaterializeTime : UnmaterializeTime;
 
@@ -228,7 +231,7 @@ public class MonsterModel : NetworkBehaviour
         IsTransforming = false;
         RpcEnterUnmaterializeForm(canPassThrough);
 
-        ResetSpeedMultiplier();
+        RpcResetSpeedMultiplier();
 
         return true;
     }

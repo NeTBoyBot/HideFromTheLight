@@ -99,17 +99,14 @@ public class MonsterModel : NetworkBehaviour
         Vector3 respawnPosition = new(2.5f, 20, -2);
 
         //Set position on server first
+        CharacterController.enabled = false;
         transform.position = respawnPosition;
+        CharacterController.enabled = true;
+
+        health = 100;
 
         //Then notify clients
         RpcHandleDeath(respawnPosition);
-    }
-
-    [ClientRpc]
-    private void RpcTeleportToPosition(Vector3 position)
-    {
-        Debug.Log("Respawn position = " + position);
-        transform.position = position;
     }
 
     [ClientRpc]
@@ -118,15 +115,12 @@ public class MonsterModel : NetworkBehaviour
         Debug.Log($"<color=green>[Client]</color> RpcHandleDeath called for {gameObject.name}");
 
         //Set position directly
+        CharacterController.enabled = false;
         transform.position = respawnPosition;
+        CharacterController.enabled = true;
 
         //Trigger any death effects/animations
         OnDieEvent?.Invoke();
-
-        if (isServer)
-        {
-            health = 100;
-        }
     }
 
     #endregion
